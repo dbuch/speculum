@@ -20,12 +20,12 @@ struct Mirrors
     last_check: Option<DateTime<Utc>>,
     num_checks: Option<u64>,
     check_frequency: Option<u64>,
-    urls: Vec<Status>,
+    urls: Vec<Mirror>,
     version: u64,
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
-struct Status {
+struct Mirror {
     url: Option<String>,
     protocol: Option<String>,
     last_sync: Option<DateTime<Utc>>,
@@ -49,7 +49,7 @@ impl Mirrors {
         surf::get(URL).recv_json().await
     }
 
-    pub fn get(&self) -> impl Iterator<Item = &Status>
+    pub fn get(&self) -> impl Iterator<Item = &Mirror>
     {
         self.urls.iter()
             .sorted_by(|a, b| {
@@ -60,7 +60,7 @@ impl Mirrors {
     }
 }
 
-impl Status {
+impl Mirror {
     pub fn get_coredb_url(&self) -> Option<String>
     {
         if let Some(mut url) = self.url.clone()
