@@ -10,12 +10,10 @@ use std::cmp::Ord;
 use std::time::Instant;
 use async_std::task;
 use async_std::task::JoinHandle;
-use std::collections::BinaryHeap;
-use ordered_float::OrderedFloat;
 
 static URL: &str = "https://www.archlinux.org/mirrors/status/json/";
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 struct Mirrors
 {
     cutoff: Option<u64>,
@@ -58,7 +56,7 @@ impl Mirrors {
                 b.completion_pct.partial_cmp(&a.completion_pct).unwrap_or(std::cmp::Ordering::Equal)
             })
             .sorted_by(|a, b| Ord::cmp(&b.last_sync, &a.last_sync))
-            .filter(|&s| s.protocol == Some("http".to_string()))
+            .filter(|&s| s.protocol == Some("https".to_string()))
     }
 }
 
@@ -78,31 +76,27 @@ impl Status {
 async fn main() -> Result<(), surf::Exception> {
     let mirrors = Mirrors::fetch().await?;
     let latest = mirrors.get();
-    let mut tasks: Vec<JoinHandle<OrderedFloat<f64>>> = Vec::new();
-    let mut heap = BinaryHeap::<OrderedFloat<f64>>::new();
+    let mut tasks: Vec<JoinHandle<(String, f64)>> = Vec::new();
 
     for status in latest.take(20) {
         if let Some(db_url) = status.get_coredb_url()
         {
+            let url = db_url.clone();
             tasks.push(
-                task::spawn(async {
+                task::spawn(async move {
                     let now = Instant::now();
                     let mut res = surf::get(db_url).await.unwrap();
                     let n_bytes = res.body_bytes().await.unwrap();
                     let elapsed = now.elapsed();
-                    OrderedFloat::from(n_bytes.len() as f64 / 1_000.0 / elapsed.as_secs_f64())
+                    (url, n_bytes.len() as f64 / 1_000.0 / elapsed.as_secs_f64())
                 })
             );
         }
     }
 
     for task in tasks {
-        heap.push(task.await)
-    }
-
-    while let Some(fastest) = heap.pop()
-    {
-        println!("{:.2}", *fastest);
+        let (url, rate) = task.await;
+        println!("Rate: {0: >8.1} KiB/s [{1}]", rate, url);
     }
 
     Ok(())
