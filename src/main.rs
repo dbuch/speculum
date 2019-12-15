@@ -10,23 +10,34 @@ use std::cmp::Ord;
 use std::time::Instant;
 use async_std::task;
 use async_std::task::JoinHandle;
+use async_macros::Join;
 
 static URL: &str = "https://www.archlinux.org/mirrors/status/json/";
 
-#[derive(Clone, Serialize, Deserialize, Debug)]
-struct Mirrors
+enum Protocol
+{
+    Https,
+    Http,
+    Rsync,
+}
+
+#[derive(Clone, Deserialize, Debug)]
+#[serde(bound(deserialize = "Mirrors<'a>: Deserialize<'a>"))]
+struct Mirrors<'a>
 {
     cutoff: Option<u64>,
     last_check: Option<DateTime<Utc>>,
     num_checks: Option<u64>,
     check_frequency: Option<u64>,
-    urls: Vec<Mirror>,
+    #[serde(bound(deserialize = "Vec<Mirror<'a>>: Deserialize<'de>"))]
+    urls: Vec<Mirror<'a>>,
     version: u64,
 }
 
-#[derive(Clone, Serialize, Deserialize, Debug)]
-struct Mirror {
-    url: Option<String>,
+#[derive(Clone, Deserialize, Debug)]
+#[serde(bound(deserialize = "Mirror<'de>: Deserialize<'de>"))]
+struct Mirror<'a> {
+    url: &'a str,
     protocol: Option<String>,
     last_sync: Option<DateTime<Utc>>,
     completion_pct: f64,
@@ -43,10 +54,11 @@ struct Mirror {
     details: Option<String>
 }
 
-impl Mirrors {
-    pub async fn fetch() -> Result<Mirrors, surf::Exception>
+impl<'a> Mirrors<'a> {
+    pub async fn fetch() -> Result<Mirrors<'a>, surf::Exception>
     {
-        surf::get(URL).recv_json().await
+        let client = surf::Client::new();
+        client.get(URL).recv_json().await?
     }
 
     pub fn get(&self) -> impl Iterator<Item = &Mirror>
@@ -60,15 +72,12 @@ impl Mirrors {
     }
 }
 
-impl Mirror {
-    pub fn get_coredb_url(&self) -> Option<String>
+impl<'a> Mirror<'a> {
+    pub fn get_coredb_url(&self) -> String
     {
-        if let Some(mut url) = self.url.clone()
-        {
-            url.push_str("core/os/x86_64/core.db");
-            return Some(url);
-        }
-        None
+        let string = self.url.to_string();
+        string.push_str("core/os/x86_64/core.db");
+        string
     }
 }
 
@@ -76,22 +85,19 @@ impl Mirror {
 async fn main() -> Result<(), surf::Exception> {
     let mirrors = Mirrors::fetch().await?;
     let latest = mirrors.get();
-    let mut tasks: Vec<JoinHandle<(String, f64)>> = Vec::new();
+    let mut tasks: Vec<JoinHandle<(&str, f64)>> = Vec::new();
 
-    for status in latest.take(20) {
-        if let Some(db_url) = status.get_coredb_url()
-        {
-            let url = db_url.clone();
-            tasks.push(
-                task::spawn(async move {
-                    let now = Instant::now();
-                    let mut res = surf::get(db_url).await.unwrap();
-                    let n_bytes = res.body_bytes().await.unwrap();
-                    let elapsed = now.elapsed();
-                    (url, n_bytes.len() as f64 / 1_000.0 / elapsed.as_secs_f64())
-                })
-            );
-        }
+    for mirror in latest.take(20) {
+        let db_url = mirror.get_coredb_url();
+        tasks.push(
+            task::spawn(async move {
+                let now = Instant::now();
+                let mut res = surf::get(db_url).await.unwrap();
+                let n_bytes = res.body_bytes().await.unwrap();
+                let elapsed = now.elapsed();
+                (mirror.url, n_bytes.len() as f64 / 1_000.0 / elapsed.as_secs_f64())
+            })
+        );
     }
 
     for task in tasks {
