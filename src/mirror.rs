@@ -3,6 +3,7 @@ use chrono::prelude::*;
 use serde::Deserialize;
 
 #[derive(Clone, Deserialize, Debug, PartialEq)]
+#[serde(rename_all = "lowercase")]
 pub enum Protocol
 {
     Https,
