@@ -42,16 +42,16 @@ impl From<String> for Protocol
 impl Mirror {
     pub fn get_coredb_url(&self) -> String
     {
-        let mut string = self.url.as_ref().unwrap().to_string();
-        string.push_str("core/os/x86_64/core.db");
-        string
+        let mut url = self.url;
+        url.push_str("core/os/x86_64/core.db");
+        url
     }
 }
 
-
+//TODO: Make these types more rusty, (ie. uri -> url::Url type)
 #[derive(Clone, Deserialize, Debug)]
 pub struct Mirror {
-    pub url: Option<String>,
+    pub url: String,
     pub protocol: Protocol,
     pub last_sync: Option<DateTime<Utc>>,
     pub completion_pct: f64,
