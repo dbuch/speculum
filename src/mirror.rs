@@ -20,7 +20,7 @@ impl Into<String> for Protocol
             Protocol::Https => "https",
             Protocol::Http => "http",
             Protocol::Rsync => "rsync",
-            _ => "unknown"
+            _ => panic!("Protocol not supported")
         };
         res.to_string()
     }
@@ -34,7 +34,7 @@ impl From<String> for Protocol
             "https" => Protocol::Https,
             "http" => Protocol::Http,
             "rsync" => Protocol::Rsync,
-            _ => Protocol::Unknown,
+            _ => panic!("Protocol not supported")
         }
     }
 }
