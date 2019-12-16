@@ -42,7 +42,7 @@ impl From<String> for Protocol
 impl Mirror {
     pub fn get_coredb_url(&self) -> String
     {
-        let mut url = self.url;
+        let mut url = self.url.clone();
         url.push_str("core/os/x86_64/core.db");
         url
     }

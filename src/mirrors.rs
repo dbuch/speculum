@@ -48,7 +48,7 @@ impl Mirrors {
     {
         let mut tasks: Vec<JoinHandle<(String, f64)>> = Vec::new();
         for mirror in self.get().take(20) {
-            let url = mirror.url.clone().unwrap();
+            let url = mirror.url.clone();
             let db_url = mirror.get_coredb_url();
             tasks.push(
                 task::spawn(async move {
