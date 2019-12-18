@@ -37,11 +37,11 @@ impl Mirrors {
     pub fn get(&self) -> impl Iterator<Item = &Mirror>
     {
         self.urls.iter()
+            .filter(|&s| s.protocol == Protocol::Https)
             .sorted_by(|a, b| {
                 b.completion_pct.partial_cmp(&a.completion_pct).unwrap_or(std::cmp::Ordering::Equal)
             })
             .sorted_by(|a, b| Ord::cmp(&b.last_sync, &a.last_sync))
-            .filter(|&s| s.protocol == Protocol::Https)
     }
 
     pub async fn rate(&self)
