@@ -4,44 +4,38 @@ use serde::Deserialize;
 
 #[derive(Clone, Deserialize, Debug, PartialEq)]
 #[serde(rename_all = "lowercase")]
-pub enum Protocol
-{
+pub enum Protocol {
     Https,
     Http,
     Rsync,
     Unknown,
 }
 
-impl Into<String> for Protocol
-{
-    fn into(self: Self) -> String
-    {
+impl Into<String> for Protocol {
+    fn into(self: Self) -> String {
         let res = match self {
             Protocol::Https => "https",
             Protocol::Http => "http",
             Protocol::Rsync => "rsync",
-            _ => panic!("Protocol not supported")
+            _ => panic!("Protocol not supported"),
         };
         res.to_string()
     }
 }
 
-impl From<String> for Protocol
-{
-    fn from(s: String) -> Protocol
-    {
+impl From<String> for Protocol {
+    fn from(s: String) -> Protocol {
         match s.as_ref() {
             "https" => Protocol::Https,
             "http" => Protocol::Http,
             "rsync" => Protocol::Rsync,
-            _ => panic!("Protocol not supported")
+            _ => panic!("Protocol not supported"),
         }
     }
 }
 
 impl Mirror {
-    pub fn get_coredb_url(&self) -> String
-    {
+    pub fn get_coredb_url(&self) -> String {
         let mut url = self.url.clone();
         url.push_str("core/os/x86_64/core.db");
         url
@@ -65,5 +59,5 @@ pub struct Mirror {
     pub isos: Option<bool>,
     pub ipv4: bool,
     pub ipv6: bool,
-    pub details: Option<String>
+    pub details: Option<String>,
 }
