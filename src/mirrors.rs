@@ -39,6 +39,9 @@ impl Mirrors {
         self.urls.iter()
             .filter(|&s| s.protocol == Protocol::Https)
             .sorted_by(|a, b| {
+                a.score.partial_cmp(&b.score).unwrap_or(std::cmp::Ordering::Equal)
+            })
+            .sorted_by(|a, b| {
                 b.completion_pct.partial_cmp(&a.completion_pct).unwrap_or(std::cmp::Ordering::Equal)
             })
             .sorted_by(|a, b| Ord::cmp(&b.last_sync, &a.last_sync))
