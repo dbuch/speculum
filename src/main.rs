@@ -2,14 +2,22 @@ mod reflector;
 mod mirrors;
 mod mirror;
 
-use reflector::Reflector;
+use speculum::Speculum;
 use itertools::Itertools;
+use users::get_current_uid;
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error + Send + Sync>>;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let reflector = Reflector::new();
+
+    if get_current_uid() != 0
+    {
+        eprintln!("This program should be run as root!");
+        return Ok(());
+    }
+
+    let reflector = Speculum::new();
     let mirrors = reflector.fetch_mirrors().await?;
 
     mirrors
@@ -17,8 +25,9 @@ async fn main() -> Result<()> {
         .sorted_by(|a, b| a.score.partial_cmp(&b.score).unwrap())
         .filter(|mirror| mirror.score.is_some())
         .filter(|mirror| mirror.protocol.as_ref().unwrap().starts_with("http"))
-        .take(5)
-        .for_each(|mirror| println!("Score {}, Url: {:?}", mirror.url.unwrap(), mirror.score));
+        .take(20)
+        .sorted_by(|a, b| a.last_sync.cmp(&b.last_sync))
+        .for_each(|mirror| println!("Server = {}$repo/os/$arch", mirror.url.unwrap()));
 
     /*
     mirrors.urls

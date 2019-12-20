@@ -88,17 +88,17 @@ impl IntoIterator for Mirrors
 static URL: &str = "https://www.archlinux.org/mirrors/status/json/";
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error + Send + Sync>>;
 
-pub struct Reflector
+pub struct Speculum
 {
     https_client: Rc<hyper::Client<HttpsConnector<HttpConnector>, Body>>,
     http_client: Rc<hyper::Client<HttpConnector, Body>>
 }
 
-impl Reflector {
+impl Speculum {
     pub fn new() -> Self
     {
         let https = HttpsConnector::new();
-        Reflector {
+        Speculum {
             https_client: 
                 Rc::new(Client::builder()
                     .keep_alive_timeout(std::time::Duration::new(5, 0))
