@@ -38,46 +38,5 @@ async fn main() -> Result<()> {
     let mut mirrorlist = fs::File::open(MIRRORLIST).await?;
     mirrorlist.write_all(fetched.as_bytes()).await?;
 
-    /*
-    mirrors.urls
-        .iter()
-        .filter(|http| http.protocol == mirror::Protocol::Https)
-        .sorted_by(|a, b| a.score.partial_cmp(&b.score).unwrap())
-        .for_each(|mirror| {
-            let url = mirror.url.clone();
-            let db_url = mirror.get_coredb_url();
-            tasks.push(task::spawn(async move {
-                if let Ok(mut res) = surf::get(db_url).await
-                {
-                    let now = Instant::now();
-                    if let Ok(n_bytes) = res.body_bytes().await
-                    {
-                        let elapsed = now.elapsed();
-                        println!("{}", elapsed.as_secs_f64());
-                        return Some((url, n_bytes.len() as f64 / elapsed.as_secs_f64()));
-                    }
-                    return None;
-                }
-                None
-            }));
-        });
-
-    let mut count = 0u64;
-    println!("Rating {} / {}", count, n_mirrors);
-    let mut res = Vec::<(String, f64)>::new();
-    for task in tasks {
-        if let Some((url, rate)) = task.await
-        {
-            count += 1;
-            res.push((url, rate));
-        }
-    }
-    println!("Done Rated {} mirrors", &res.len());
-
-    res.iter().sorted_by(|a, b| b.1.partial_cmp(&a.1).unwrap())
-        .for_each(|(url, rate)| println!("{} {}", rate, url));
-    //mirrors.rate().await;
-
-    */
     Ok(())
 }
