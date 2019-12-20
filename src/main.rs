@@ -1,12 +1,16 @@
-mod reflector;
+mod speculum;
 mod mirrors;
 mod mirror;
 
 use speculum::Speculum;
 use itertools::Itertools;
 use users::get_current_uid;
+use tokio::fs;
+use tokio::prelude::*;
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error + Send + Sync>>;
+
+const MIRRORLIST: &str = "/etc/pacman.d/mirrorlist";
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -17,17 +21,22 @@ async fn main() -> Result<()> {
         return Ok(());
     }
 
-    let reflector = Speculum::new();
-    let mirrors = reflector.fetch_mirrors().await?;
+    let speculum = Speculum::new();
+    let mirrors = speculum.fetch_mirrors().await?;
 
-    mirrors
+    let fetched: String =
+        mirrors
         .into_iter()
         .sorted_by(|a, b| a.score.partial_cmp(&b.score).unwrap())
         .filter(|mirror| mirror.score.is_some())
         .filter(|mirror| mirror.protocol.as_ref().unwrap().starts_with("http"))
         .take(20)
         .sorted_by(|a, b| a.last_sync.cmp(&b.last_sync))
-        .for_each(|mirror| println!("Server = {}$repo/os/$arch", mirror.url.unwrap()));
+        .map(|m| m.to_string())
+        .join("\n");
+
+    let mut mirrorlist = fs::File::open(MIRRORLIST).await?;
+    mirrorlist.write_all(fetched.as_bytes()).await?;
 
     /*
     mirrors.urls

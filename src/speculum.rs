@@ -22,6 +22,14 @@ pub enum Protocol {
     Unknown,
 }
 
+impl ToString for Mirror
+{
+    fn to_string(&self) -> String
+    {
+        format!("Server = {}$reop/os/$arch", self.url.as_ref().unwrap())
+    }
+}
+
 impl Into<String> for Protocol {
     fn into(self: Self) -> String {
         let res = match self {
