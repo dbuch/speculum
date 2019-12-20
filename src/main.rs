@@ -1,12 +1,8 @@
-mod speculum;
-mod mirrors;
-mod mirror;
-
-use speculum::Speculum;
-use itertools::Itertools;
 use users::get_current_uid;
 use tokio::fs;
 use tokio::prelude::*;
+use itertools::Itertools;
+use speculum::speculum::Speculum;
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error + Send + Sync>>;
 

@@ -1,5 +1,5 @@
 [package]
-name = "Speculum"
+name = "speculum"
 version = "0.1.0"
 authors = ["Daniel Buch Hansen <boogiewasthere@gmail.com>"]
 edition = "2018"
