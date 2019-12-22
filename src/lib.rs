@@ -1,2 +1,4 @@
 mod data_model;
-pub mod speculum;
+mod speculum;
+
+pub use speculum::Speculum;

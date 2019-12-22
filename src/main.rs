@@ -3,7 +3,7 @@ use log::*;
 use tokio::fs::OpenOptions;
 use tokio::prelude::*;
 use itertools::Itertools;
-use speculum::speculum::Speculum;
+use speculum::Speculum;
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error + Send + Sync>>;
 
