@@ -33,9 +33,9 @@ async fn main() -> Result<()> {
     let fetched: String =
         mirrors
         .into_iter()
-        .sorted_by(|a, b| a.score.partial_cmp(&b.score).unwrap())
+        .filter(|mirror| mirror.protocol.is_some() && mirror.protocol.as_ref().unwrap().starts_with("http"))
         .filter(|mirror| mirror.score.is_some())
-        .filter(|mirror| mirror.protocol.as_ref().unwrap().starts_with("http"))
+        .sorted_by(|a, b| a.score.partial_cmp(&b.score).unwrap())
         .take(20)
         .map(|m| m.to_string())
         .join("\n");
@@ -44,6 +44,7 @@ async fn main() -> Result<()> {
         OpenOptions::new()
             .write(true)
             .create(true)
+            .truncate(true)
             .open(MIRRORLIST).await?;
     info!("writing mirror list!");
     mirrorlist.write(fetched.as_bytes()).await?;
