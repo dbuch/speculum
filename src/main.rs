@@ -4,11 +4,13 @@ use tokio::fs::OpenOptions;
 use tokio::prelude::*;
 use itertools::Itertools;
 use speculum::Speculum;
+use speculum::{cli, Protocols};
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error + Send + Sync>>;
 
 const MIRRORLIST: &str = "/etc/pacman.d/mirrorlist";
 
+#[allow(unused)]
 fn check_root() {
     let is_root = users::get_current_uid() == 0;
 
@@ -21,9 +23,13 @@ fn check_root() {
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    check_root();
+    //check_root();
 
     env_logger::init();
+
+    let options = cli::initialize();
+
+    dbg!(&options.filters.protocol);
 
     let speculum = Speculum::new();
     let mirrors = speculum.fetch_mirrors().await?;
