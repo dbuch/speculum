@@ -98,6 +98,7 @@ type Result<T> = std::result::Result<T, Box<dyn std::error::Error + Send + Sync>
 pub struct Speculum
 {
     https_client: Rc<hyper::Client<HttpsConnector<HttpConnector>, Body>>,
+    #[allow(dead_code)] // Not all mirrors uses https
     http_client: Rc<hyper::Client<HttpConnector, Body>>
 }
 

@@ -1,5 +1,5 @@
 use users::get_current_uid;
-use tokio::fs::{self, OpenOptions};
+use tokio::fs::OpenOptions;
 use tokio::prelude::*;
 use itertools::Itertools;
 use speculum::speculum::Speculum;
@@ -27,18 +27,15 @@ async fn main() -> Result<()> {
         .filter(|mirror| mirror.score.is_some())
         .filter(|mirror| mirror.protocol.as_ref().unwrap().starts_with("http"))
         .take(20)
-        .sorted_by(|a, b| a.last_sync.cmp(&b.last_sync))
         .map(|m| m.to_string())
         .join("\n");
 
-    let mut options = OpenOptions::new();
     let mut mirrorlist = 
-        options
+        OpenOptions::new()
             .write(true)
             .create(true)
             .open(MIRRORLIST).await?;
-    //let mut mirrorlist = fs::File::open(MIRRORLIST).await?;
-    mirrorlist.write_all(fetched.as_bytes()).await?;
+    mirrorlist.write(fetched.as_bytes()).await?;
 
     Ok(())
 }
