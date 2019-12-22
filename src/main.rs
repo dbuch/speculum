@@ -1,5 +1,5 @@
 use users::get_current_uid;
-use tokio::fs;
+use tokio::fs::{self, OpenOptions};
 use tokio::prelude::*;
 use itertools::Itertools;
 use speculum::speculum::Speculum;
@@ -31,7 +31,13 @@ async fn main() -> Result<()> {
         .map(|m| m.to_string())
         .join("\n");
 
-    let mut mirrorlist = fs::File::open(MIRRORLIST).await?;
+    let mut options = OpenOptions::new();
+    let mut mirrorlist = 
+        options
+            .write(true)
+            .create(true)
+            .open(MIRRORLIST).await?;
+    //let mut mirrorlist = fs::File::open(MIRRORLIST).await?;
     mirrorlist.write_all(fetched.as_bytes()).await?;
 
     Ok(())

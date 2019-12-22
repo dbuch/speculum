@@ -25,7 +25,7 @@ impl ToString for Mirror
 {
     fn to_string(&self) -> String
     {
-        format!("Server = {}$reop/os/$arch", self.url.as_ref().unwrap())
+        format!("Server = {}$repo/os/$arch", self.url.as_ref().unwrap())
     }
 }
 
