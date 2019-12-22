@@ -8,8 +8,6 @@ use speculum::{cli, Protocols};
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error + Send + Sync>>;
 
-const MIRRORLIST: &str = "/etc/pacman.d/mirrorlist";
-
 #[allow(unused)]
 fn check_root() {
     let is_root = users::get_current_uid() == 0;
@@ -51,7 +49,7 @@ async fn main() -> Result<()> {
             .write(true)
             .create(true)
             .truncate(true)
-            .open(MIRRORLIST).await?;
+            .open(options.optional.save).await?;
     info!("writing mirror list!");
     mirrorlist.write(fetched.as_bytes()).await?;
 
