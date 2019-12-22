@@ -1,16 +1,13 @@
 use bytes::buf::BufExt as _;
+use hyper::{
+    body::{aggregate, Body},
+    client::Client,
+    client::HttpConnector,
+};
+use hyper_tls::HttpsConnector;
 use serde::Deserialize;
 use serde_json::from_reader;
 use std::rc::Rc;
-use hyper::{
-    client::Client,
-    client::HttpConnector,
-    body::{
-        Body,
-        aggregate,
-    },
-};
-use hyper_tls::HttpsConnector;
 
 #[derive(Clone, Deserialize, Debug, PartialEq)]
 #[serde(rename_all = "lowercase")]
@@ -21,10 +18,8 @@ pub enum Protocol {
     Unknown,
 }
 
-impl ToString for Mirror
-{
-    fn to_string(&self) -> String
-    {
+impl ToString for Mirror {
+    fn to_string(&self) -> String {
         format!("Server = {}$repo/os/$arch", self.url.as_ref().unwrap())
     }
 }
@@ -82,12 +77,10 @@ pub struct Mirrors {
     version: u64,
 }
 
-impl IntoIterator for Mirrors
-{
+impl IntoIterator for Mirrors {
     type Item = Mirror;
     type IntoIter = std::vec::IntoIter<Self::Item>;
-    fn into_iter(self) -> Self::IntoIter
-    {
+    fn into_iter(self) -> Self::IntoIter {
         self.urls.into_iter()
     }
 }
@@ -95,31 +88,30 @@ impl IntoIterator for Mirrors
 static URL: &str = "https://www.archlinux.org/mirrors/status/json/";
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error + Send + Sync>>;
 
-pub struct Speculum
-{
+pub struct Speculum {
     https_client: Rc<hyper::Client<HttpsConnector<HttpConnector>, Body>>,
     #[allow(dead_code)] // Not all mirrors uses https
-    http_client: Rc<hyper::Client<HttpConnector, Body>>
+    http_client: Rc<hyper::Client<HttpConnector, Body>>,
 }
 
 impl Speculum {
-    pub fn new() -> Self
-    {
+    pub fn new() -> Self {
         let https = HttpsConnector::new();
         Speculum {
-            https_client: 
-                Rc::new(Client::builder()
+            https_client: Rc::new(
+                Client::builder()
                     .keep_alive_timeout(std::time::Duration::new(5, 0))
-                    .build(https)),
-            http_client: 
-                Rc::new(Client::builder()
+                    .build(https),
+            ),
+            http_client: Rc::new(
+                Client::builder()
                     .keep_alive_timeout(std::time::Duration::new(5, 0))
-                    .build_http())
+                    .build_http(),
+            ),
         }
     }
 
-    pub async fn fetch_mirrors(&self) -> Result<Mirrors>
-    {
+    pub async fn fetch_mirrors(&self) -> Result<Mirrors> {
         let res = self.https_client.get(URL.parse()?).await?;
         let body = aggregate(res).await?;
         let reader = body.reader();
