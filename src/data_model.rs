@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Protocol {
     Http,
     Https,
@@ -9,19 +9,45 @@ pub enum Protocol {
 
 impl std::str::FromStr for Protocol {
     type Err = std::string::ParseError;
-    fn from_str(&self) -> Result<Self, Self::Err> {
-        let prot = match self {
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let prot = match s {
             "http" => Protocol::Http,
             "https" => Protocol::Https,
             "rsync" => Protocol::Rsync,
+            _ => panic!("unknown protocol")
         };
         Ok(prot)
     }
 }
 
+impl Into<String> for Protocol
+{
+    fn into(self) -> String
+    {
+        let s = match self {
+            Protocol::Http => "http",
+            Protocol::Https => "https",
+            Protocol::Rsync => "rsync"
+        };
+        s.to_string()
+    }
+}
+
+impl From<String> for Protocol
+{
+    fn from(s: String) -> Self {
+        match s.as_ref() {
+            "http" => Protocol::Http,
+            "https" => Protocol::Https,
+            "rsync" => Protocol::Rsync,
+            _ => panic!("unknown protocol")
+        }
+    }
+}
+
 impl ToString for Mirror {
     fn to_string(&self) -> String {
-        format!("Server = {}$repo/os/$arch", self.url.unwrap().to_string())
+        format!("Server = {}$repo/os/$arch", &self.url.clone().unwrap())
     }
 }
 
@@ -29,7 +55,7 @@ impl ToString for Mirror {
 #[derive(Clone, Deserialize, Debug)]
 pub struct Mirror {
     pub url: Option<String>,
-    pub protocol: Option<String>,
+    pub protocol: Option<Protocol>,
     pub last_sync: Option<String>,
     pub completion_pct: Option<f64>,
     pub delay: Option<u64>,

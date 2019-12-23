@@ -13,7 +13,7 @@ pub struct Cli {
 
 #[derive(StructOpt, Debug)]
 pub struct Filters {
-    #[structopt(short, long, from = "from_os_str")]
+    #[structopt(short, long)]
     pub protocol: Protocol,
     #[structopt(short, long)]
     pub country: Option<String>,

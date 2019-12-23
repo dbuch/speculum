@@ -12,9 +12,8 @@ chrono = { version = "^0.4.10", features = ["serde"] }
 url = "^2.1.0"
 itertools = "^0.8.2"
 structopt = "^0.3.5"
+log = "0.4.8"
 env_logger = "^0.7.1"
-hyper = "^0.13.1"
-hyper-tls = "0.4.0"
 bytes = "^0.5.3"
 users = "^0.9.1"
-log = "0.4.8"
+reqwest = { git = "https://github.com/seanmonstar/reqwest.git", features = ["json"] }

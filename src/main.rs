@@ -6,7 +6,6 @@ use speculum::Speculum;
 use tokio::fs::OpenOptions;
 use tokio::prelude::*;
 
-type Result<T> = std::result::Result<T, Box<dyn std::error::Error + Send + Sync>>;
 #[allow(unused)]
 fn check_root() {
     let is_root = users::get_current_uid() == 0;
@@ -18,7 +17,7 @@ fn check_root() {
 }
 
 #[tokio::main]
-async fn main() -> Result<()> {
+async fn main() -> Result<(), reqwest::Error> {
     //check_root();
 
     env_logger::init();
@@ -33,11 +32,7 @@ async fn main() -> Result<()> {
     let fetched: String = mirrors
         .into_iter()
         .filter(|mirror| {
-            if mirror.protocol.is_some() {
-                let protocols: Vec<&str> = mirror.protocol.unwrap().split(",").collect();
-                return protocols.contains("http");
-            }
-            false
+            mirror.protocol == options.filters.protocol
         })
         .filter(|mirror| mirror.score.is_some())
         .sorted_by(|a, b| a.score.partial_cmp(&b.score).unwrap())
