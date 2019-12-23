@@ -1,8 +1,8 @@
 use env_logger;
 use itertools::Itertools;
 use log::*;
-use speculum::Speculum;
 use speculum::cli;
+use speculum::Speculum;
 use tokio::fs::OpenOptions;
 use tokio::prelude::*;
 
@@ -33,8 +33,7 @@ async fn main() -> Result<()> {
     let fetched: String = mirrors
         .into_iter()
         .filter(|mirror| {
-            if mirror.protocol.is_some()
-            {
+            if mirror.protocol.is_some() {
                 let protocols: Vec<&str> = mirror.protocol.unwrap().split(",").collect();
                 return protocols.contains("http");
             }

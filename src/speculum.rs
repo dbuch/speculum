@@ -1,13 +1,13 @@
+use super::Mirrors;
 use bytes::buf::BufExt as _;
 use hyper::{
     body::{aggregate, Body},
     client::Client,
     client::HttpConnector,
 };
-use std::rc::Rc;
 use hyper_tls::HttpsConnector;
 use serde_json::from_reader;
-use super::Mirrors;
+use std::rc::Rc;
 
 static URL: &str = "https://www.archlinux.org/mirrors/status/json/";
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error + Send + Sync>>;

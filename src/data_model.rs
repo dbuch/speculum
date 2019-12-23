@@ -9,10 +9,8 @@ pub enum Protocol {
 
 impl std::str::FromStr for Protocol {
     type Err = std::string::ParseError;
-    fn from_str(&self) -> Result<Self, Self::Err>
-    {
-        let prot = match self
-        {
+    fn from_str(&self) -> Result<Self, Self::Err> {
+        let prot = match self {
             "http" => Protocol::Http,
             "https" => Protocol::Https,
             "rsync" => Protocol::Rsync,

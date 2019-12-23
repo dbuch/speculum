@@ -1,7 +1,7 @@
+use super::data_model::*;
 use std::path::PathBuf;
 use structopt::clap::Shell;
 use structopt::StructOpt;
-use super::data_model::*;
 
 #[derive(StructOpt, Debug)]
 pub struct Cli {
