@@ -1,6 +1,6 @@
 pub mod cli;
-mod data_model;
+pub mod data_model;
 mod speculum;
 
-pub use cli::Protocols;
 pub use speculum::Speculum;
+pub use data_model::{Mirror, Mirrors};

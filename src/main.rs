@@ -2,7 +2,7 @@ use env_logger;
 use itertools::Itertools;
 use log::*;
 use speculum::Speculum;
-use speculum::{cli, Protocols};
+use speculum::cli;
 use tokio::fs::OpenOptions;
 use tokio::prelude::*;
 
@@ -25,8 +25,6 @@ async fn main() -> Result<()> {
 
     let options = cli::initialize();
 
-    dbg!(&options.filters.protocol);
-
     let speculum = Speculum::new();
     let mirrors = speculum.fetch_mirrors().await?;
 
@@ -35,7 +33,12 @@ async fn main() -> Result<()> {
     let fetched: String = mirrors
         .into_iter()
         .filter(|mirror| {
-            mirror.protocol.is_some() && mirror.protocol.as_ref().unwrap().starts_with("http")
+            if mirror.protocol.is_some()
+            {
+                let protocols: Vec<&str> = mirror.protocol.unwrap().split(",").collect();
+                return protocols.contains("http".as_ref());
+            }
+            false
         })
         .filter(|mirror| mirror.score.is_some())
         .sorted_by(|a, b| a.score.partial_cmp(&b.score).unwrap())
