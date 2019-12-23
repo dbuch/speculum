@@ -1,45 +1,29 @@
-use serde::{Deserialize, Serialize};
-use bitflags::bitflags;
+use serde::Deserialize;
 
-bitflags! {
-    #[derive(Serialize, Deserialize)]
-    pub struct Protocols: u32 {
-        const HTTP =  0b00000001;
-        const HTTPS = 0b00000010;
-        const ALL = 0b00000011;
-    }
+#[derive(Debug)]
+pub enum Protocol {
+    Http,
+    Https,
+    Rsync,
 }
 
-impl std::str::FromStr for Protocols {
+impl std::str::FromStr for Protocol {
     type Err = std::string::ParseError;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut result = Protocols::empty();
-        let split: Vec<&str> = s.split(',').collect();
-        if split.contains(&"https") {
-            result = result | Protocols::HTTPS;
-        }
-        if split.contains(&"http") {
-            result = result | Protocols::HTTP;
-        }
-        Ok(result)
-    }
-}
-
-impl ToString for Protocols {
-    fn to_string(&self) -> String {
-        let result = match *self {
-            Protocols::HTTP => "http",
-            Protocols::HTTPS => "http",
-            Protocols::ALL => "http,https",
-            _ => panic!("Unknown protocol")
+    fn from_str(&self) -> Result<Self, Self::Err>
+    {
+        let prot = match self
+        {
+            "http" => Protocol::Http,
+            "https" => Protocol::Https,
+            "rsync" => Protocol::Rsync,
         };
-        result.to_string()
+        Ok(prot)
     }
 }
 
 impl ToString for Mirror {
     fn to_string(&self) -> String {
-        format!("Server = {}$repo/os/$arch", self.url.as_ref().unwrap())
+        format!("Server = {}$repo/os/$arch", self.url.unwrap().to_string())
     }
 }
 

@@ -36,7 +36,7 @@ async fn main() -> Result<()> {
             if mirror.protocol.is_some()
             {
                 let protocols: Vec<&str> = mirror.protocol.unwrap().split(",").collect();
-                return protocols.contains("http".as_ref());
+                return protocols.contains("http");
             }
             false
         })

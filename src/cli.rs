@@ -13,8 +13,8 @@ pub struct Cli {
 
 #[derive(StructOpt, Debug)]
 pub struct Filters {
-    #[structopt(short, long, default_value = "http,https")]
-    pub protocol: Protocols,
+    #[structopt(short, long, from = "from_os_str")]
+    pub protocol: Protocol,
     #[structopt(short, long)]
     pub country: Option<String>,
 }
