@@ -31,9 +31,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 
     let fetched: String = mirrors
         .into_iter()
-        .filter(|mirror| {
-            mirror.protocol.unwrap() == options.filters.protocol
-        })
+        .filter(|mirror| mirror.protocol.unwrap() == options.filters.protocol)
         .filter(|mirror| mirror.score.is_some())
         .sorted_by(|a, b| a.score.partial_cmp(&b.score).unwrap())
         .take(20)

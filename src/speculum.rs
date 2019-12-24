@@ -4,13 +4,13 @@ use reqwest::Client;
 static URL: &str = "https://www.archlinux.org/mirrors/status/json/";
 
 pub struct Speculum {
-    client: reqwest::Client
+    client: reqwest::Client,
 }
 
 impl Speculum {
     pub fn new() -> Self {
         Speculum {
-            client: Client::new()
+            client: Client::new(),
         }
     }
 

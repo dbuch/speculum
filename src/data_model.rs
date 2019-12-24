@@ -15,7 +15,7 @@ impl std::str::FromStr for Protocol {
             "http" => Protocol::Http,
             "https" => Protocol::Https,
             "rsync" => Protocol::Rsync,
-            _ => panic!("unknown protocol")
+            _ => panic!("unknown protocol"),
         };
         Ok(prot)
     }
