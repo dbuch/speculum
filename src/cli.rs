@@ -11,13 +11,13 @@ pub struct Cli {
     pub optional: Optional,
 
     #[structopt(short, long, parse(from_occurrences))]
-    pub verbose: u8
+    pub verbose: u8,
 }
 
 #[derive(StructOpt, Debug)]
 pub struct Filters {
     #[structopt(short, long)]
-    pub protocol: Protocol,
+    pub protocols: Option<Protocols>,
     #[structopt(short, long)]
     pub country: Option<String>,
 }

@@ -22,7 +22,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let options = cli::initialize();
 
     match options.verbose {
-        1 => std::env::set_var("RUST_LOG", "info"),
+        1 => std::env::set_var("RUST_LOG", "speculum=info"),
         2 => std::env::set_var("RUST_LOG", "trace"),
         3 => std::env::set_var("RUST_LOG", "warn"),
         4 => std::env::set_var("RUST_LOG", "error"),
@@ -39,10 +39,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 
     let fetched: String = mirrors
         .into_iter()
-        .filter(|mirror| mirror.protocol.unwrap() == options.filters.protocol)
+        .filter(|mirror| {
+            if options.filters.protocols.is_some()
+            {
+                // TODO: Fix me!
+                return mirror.protocol == options.filters.protocols.unwrap()
+            }
+            true
+        })
         .filter(|mirror| mirror.score.is_some())
         .sorted_by(|a, b| a.score.partial_cmp(&b.score).unwrap())
-        .take(20)
         .map(|m| m.to_string())
         .join("\n");
 
