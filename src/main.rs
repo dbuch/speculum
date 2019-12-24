@@ -19,10 +19,18 @@ fn check_root() {
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     //check_root();
+    let options = cli::initialize();
+
+    match options.verbose {
+        1 => std::env::set_var("RUST_LOG", "info"),
+        2 => std::env::set_var("RUST_LOG", "trace"),
+        3 => std::env::set_var("RUST_LOG", "warn"),
+        4 => std::env::set_var("RUST_LOG", "error"),
+        5 => std::env::set_var("RUST_LOG", "debug"),
+        _ => {}
+    }
 
     env_logger::init();
-
-    let options = cli::initialize();
 
     let speculum = Speculum::new();
     let mirrors = speculum.fetch_mirrors().await?;

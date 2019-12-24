@@ -9,6 +9,9 @@ pub struct Cli {
     pub filters: Filters,
     #[structopt(flatten)]
     pub optional: Optional,
+
+    #[structopt(short, long, parse(from_occurrences))]
+    pub verbose: u8
 }
 
 #[derive(StructOpt, Debug)]
