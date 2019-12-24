@@ -1,6 +1,7 @@
 use serde::Deserialize;
 
-#[derive(Clone, Debug)]
+#[serde(rename_all = "lowercase")]
+#[derive(Copy, PartialEq, Deserialize, Clone, Debug)]
 pub enum Protocol {
     Http,
     Https,
@@ -17,31 +18,6 @@ impl std::str::FromStr for Protocol {
             _ => panic!("unknown protocol")
         };
         Ok(prot)
-    }
-}
-
-impl Into<String> for Protocol
-{
-    fn into(self) -> String
-    {
-        let s = match self {
-            Protocol::Http => "http",
-            Protocol::Https => "https",
-            Protocol::Rsync => "rsync"
-        };
-        s.to_string()
-    }
-}
-
-impl From<String> for Protocol
-{
-    fn from(s: String) -> Self {
-        match s.as_ref() {
-            "http" => Protocol::Http,
-            "https" => Protocol::Https,
-            "rsync" => Protocol::Rsync,
-            _ => panic!("unknown protocol")
-        }
     }
 }
 

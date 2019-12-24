@@ -17,7 +17,7 @@ fn check_root() {
 }
 
 #[tokio::main]
-async fn main() -> Result<(), reqwest::Error> {
+async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     //check_root();
 
     env_logger::init();
@@ -32,7 +32,7 @@ async fn main() -> Result<(), reqwest::Error> {
     let fetched: String = mirrors
         .into_iter()
         .filter(|mirror| {
-            mirror.protocol == options.filters.protocol
+            mirror.protocol.unwrap() == options.filters.protocol
         })
         .filter(|mirror| mirror.score.is_some())
         .sorted_by(|a, b| a.score.partial_cmp(&b.score).unwrap())
@@ -46,6 +46,7 @@ async fn main() -> Result<(), reqwest::Error> {
         .truncate(true)
         .open(options.optional.save)
         .await?;
+
     info!("writing mirror list!");
     mirrorlist.write(fetched.as_bytes()).await?;
 
