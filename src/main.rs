@@ -40,10 +40,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let fetched: String = mirrors
         .into_iter()
         .filter(|mirror| {
-            if options.filters.protocols.is_some()
-            {
+            if options.filters.protocols.is_some() {
                 // TODO: Fix me!
-                return mirror.protocol == options.filters.protocols.unwrap()
+                return mirror.protocol == options.filters.protocols.unwrap();
             }
             true
         })

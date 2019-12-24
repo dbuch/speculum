@@ -9,12 +9,11 @@ pub struct Protocols {
 }
 
 impl Default for Protocols {
-    fn default() -> Protocols
-    {
+    fn default() -> Protocols {
         Protocols {
             http: true,
             https: true,
-            rsync: true
+            rsync: true,
         }
     }
 }
