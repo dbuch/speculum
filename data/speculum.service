@@ -1,0 +1,17 @@
+# /etc/systemd/system/speculum.service
+[Unit]
+Description=Update mirrorlist for pacman
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/speculum --save /etc/pacman.d/mirrorlist
+PrivateTmp=true
+ProtectHome
+ProtectSystem=strict
+ProtectKernelModules=yes
+ReadWritePaths=/etc/pacman.d/mirrorlist
+
+[Install]
+RequiredBy=multi-user.target
