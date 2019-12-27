@@ -25,6 +25,18 @@ impl Protocols {
     }
 }
 
+impl From<&str> for Protocols {
+    fn from(s: &str) -> Self
+    {
+        let split = s.split(',').collect::<Vec<&str>>();
+        Protocols {
+            http: split.contains(&"http"),
+            https: split.contains(&"https"),
+            rsync: split.contains(&"rsync"),
+        }
+    }
+}
+
 impl From<String> for Protocols {
     fn from(s: String) -> Self {
         let split = s.split(',').collect::<Vec<&str>>();
@@ -84,15 +96,22 @@ pub struct Mirrors {
     version: u64,
 }
 
-impl Mirrors {
-    pub fn order_by<F>(&mut self, order: F) -> &mut Self
+impl<'a> Mirrors {
+    pub fn order_by<F>(&'a mut self, order: F) -> &'a mut Self
     where
         F: FnMut(&Mirror, &Mirror) -> std::cmp::Ordering,
     {
         self.urls.sort_by(order);
         self
     }
-    pub fn protocols<'a, F>(&'a mut self, protocols: F) -> &mut Self
+
+    pub fn filter_protocols(&'a mut self, p: Protocols) -> &'a mut Self
+    {
+        self.urls.retain(|url| url.protocol.intercects(p));
+        self
+    }
+
+    pub fn protocols<F>(&'a mut self, protocols: F) -> &'a mut Self
     where
         F: Fn(&Protocols) -> bool,
     {
@@ -102,7 +121,6 @@ impl Mirrors {
                 urls.remove(i);
             }
         }
-        urls.shrink_to_fit();
         self
     }
 }
