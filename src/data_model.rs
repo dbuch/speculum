@@ -1,7 +1,7 @@
 use serde::Deserialize;
 
 #[serde(default, from = "String")]
-#[derive(Copy, PartialEq, Deserialize, Clone, Debug)]
+#[derive(Copy, Deserialize, Clone, Debug)]
 pub struct Protocols {
     pub http: bool,
     pub https: bool,
@@ -15,6 +15,13 @@ impl Default for Protocols {
             https: true,
             rsync: true,
         }
+    }
+}
+
+impl std::cmp::PartialEq for Protocols {
+    fn eq(&self, other: &Self) -> bool
+    {
+        self.http & other.http || self.https & other.https || self.rsync & other.rsync
     }
 }
 
@@ -75,6 +82,29 @@ pub struct Mirrors {
     check_frequency: Option<u64>,
     urls: Vec<Mirror>,
     version: u64,
+}
+
+impl Mirrors {
+    pub fn order_by<F>(&mut self, order: F) -> &mut Self
+    where
+        F: FnMut(&Mirror, &Mirror) -> std::cmp::Ordering,
+    {
+        self.urls.sort_by(order);
+        self
+    }
+    pub fn protocols<'a, F>(&'a mut self, protocols: F) -> &mut Self
+    where
+        F: Fn(&Protocols) -> bool,
+    {
+        let urls = &mut self.urls;
+        for i in 0..urls.len() {
+            if protocols(&mut urls[i].protocol) {
+                urls.remove(i);
+            }
+        }
+        urls.shrink_to_fit();
+        self
+    }
 }
 
 impl IntoIterator for Mirrors {

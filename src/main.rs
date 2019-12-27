@@ -1,8 +1,7 @@
 use env_logger;
 use itertools::Itertools;
 use log::*;
-use speculum::cli;
-use speculum::Speculum;
+use ::speculum::{speculum::Speculum, cli};
 use tokio::fs::OpenOptions;
 use tokio::prelude::*;
 
@@ -58,7 +57,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         .open(options.optional.save)
         .await?;
 
-    info!("writing mirror list!");
     mirrorlist.write(fetched.as_bytes()).await?;
 
     Ok(())
