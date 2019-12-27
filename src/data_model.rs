@@ -18,8 +18,8 @@ impl Default for Protocols {
     }
 }
 
-impl std::cmp::PartialEq for Protocols {
-    fn eq(&self, other: &Self) -> bool
+impl Protocols {
+    pub fn intercects(&self, other: Protocols) -> bool
     {
         self.http & other.http || self.https & other.https || self.rsync & other.rsync
     }
@@ -78,8 +78,8 @@ pub struct Mirror {
 pub struct Mirrors {
     cutoff: u64,
     last_check: String,
-    num_checks: Option<u64>,
-    check_frequency: Option<u64>,
+    num_checks: u64,
+    check_frequency: u64,
     urls: Vec<Mirror>,
     version: u64,
 }

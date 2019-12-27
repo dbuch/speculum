@@ -13,11 +13,10 @@ pub struct Cli {
     #[structopt(short, long, parse(from_occurrences))]
     pub verbose: u8,
 }
-
 #[derive(StructOpt, Debug)]
 pub struct Filters {
-    #[structopt(short, long)]
-    pub protocols: Option<Protocols>,
+    #[structopt(short, long, default_value = "https,http,rsync")]
+    pub protocols: Protocols,
     #[structopt(short, long)]
     pub country: Option<String>,
 }

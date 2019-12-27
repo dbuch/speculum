@@ -38,14 +38,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 
     let fetched: String = mirrors
         .into_iter()
+        .filter(|mirror| mirror.score.is_some() && mirror.url.is_some())
         .filter(|mirror| {
-            if options.filters.protocols.is_some() {
-                // TODO: Fix me!
-                return mirror.protocol == options.filters.protocols.unwrap();
-            }
-            true
+            mirror.protocol.intercects(options.filters.protocols)
         })
-        .filter(|mirror| mirror.score.is_some())
         .sorted_by(|a, b| a.score.partial_cmp(&b.score).unwrap())
         .map(|m| m.to_string())
         .join("\n");
