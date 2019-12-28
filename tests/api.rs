@@ -76,6 +76,7 @@ async fn api()
     "#).unwrap();
 
     mirrors
+        .filter_protocols(Protocols::from("http"))
         .order_by(|a, b| a.score.partial_cmp(&b.score).unwrap());
 
     mirrors.into_iter().for_each(|m| println!("{:?}", m.score));

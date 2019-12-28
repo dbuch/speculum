@@ -1,5 +1,6 @@
-use super::Mirror;
-use super::Protocols;
+use crate::Mirror;
+use crate::Protocols;
+
 use serde::Deserialize;
 
 #[derive(Clone, Deserialize, Debug)]
@@ -24,19 +25,6 @@ impl<'a> Mirrors {
     pub fn filter_protocols(&'a mut self, p: Protocols) -> &'a mut Self
     {
         self.urls.retain(|url| url.protocol.intercects(p));
-        self
-    }
-
-    pub fn protocols<F>(&'a mut self, protocols: F) -> &'a mut Self
-    where
-        F: Fn(&Protocols) -> bool,
-    {
-        let urls = &mut self.urls;
-        for i in 0..urls.len() {
-            if protocols(&mut urls[i].protocol) {
-                urls.remove(i);
-            }
-        }
         self
     }
 }
