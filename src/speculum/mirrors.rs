@@ -32,8 +32,7 @@ impl<'a> Mirrors {
     }
 
     pub fn take(&'a mut self, n: Option<usize>) -> &'a mut Self {
-        if let Some(n) = n
-        {
+        if let Some(n) = n {
             let urls = &mut self.urls;
             urls.truncate(n);
         }
@@ -58,13 +57,5 @@ impl<'a> Mirrors {
         file.write(fetched.as_bytes()).await?;
         file.sync_data().await?;
         Ok(())
-    }
-}
-
-impl IntoIterator for Mirrors {
-    type Item = Mirror;
-    type IntoIter = std::vec::IntoIter<Self::Item>;
-    fn into_iter(self) -> Self::IntoIter {
-        self.urls.into_iter()
     }
 }

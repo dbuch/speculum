@@ -21,7 +21,7 @@ pub struct Filters {
     pub country: Option<String>,
 
     #[structopt(short, long)]
-    pub latest: Option<usize>
+    pub latest: Option<usize>,
 }
 
 #[derive(StructOpt, Debug)]
