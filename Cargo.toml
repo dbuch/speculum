@@ -17,3 +17,4 @@ env_logger = "0.7.1"
 bytes = "0.5.3"
 users = "0.9.1"
 reqwest = { git = "https://github.com/seanmonstar/reqwest.git", features = ["json"] }
+anyhow = "1.0.26"

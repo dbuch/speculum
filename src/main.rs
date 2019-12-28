@@ -5,19 +5,9 @@ use tokio::fs::OpenOptions;
 use tokio::prelude::*;
 use speculum::{Cli, Speculum};
 
-#[allow(unused)]
-fn check_root() {
-    let is_root = users::get_current_uid() == 0;
-
-    if !is_root {
-        eprintln!("This program should be run as root!");
-        std::process::exit(1)
-    }
-}
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-    //check_root();
+async fn main() -> anyhow::Result<()> {
     let options = Cli::initialize();
 
     match options.verbose {
