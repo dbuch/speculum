@@ -1,5 +1,4 @@
-use speculum::data_model::Protocols;
-use speculum::data_model::Mirrors;
+use speculum::{Mirrors, Protocols};
 
 #[test]
 fn test_protocols()

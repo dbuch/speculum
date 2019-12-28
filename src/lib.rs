@@ -1,5 +1,7 @@
-pub mod cli;
-pub mod data_model;
-pub mod speculum;
+pub use crate::data_model::{Mirror, Mirrors, Protocols};
+pub use crate::cli::Cli;
+pub use crate::speculum::Speculum;
 
-pub use data_model::{Mirror, Mirrors};
+mod cli;
+mod data_model;
+mod speculum;

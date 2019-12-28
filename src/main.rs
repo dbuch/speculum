@@ -1,9 +1,9 @@
 use env_logger;
 use itertools::Itertools;
 use log::*;
-use ::speculum::{speculum::Speculum, cli};
 use tokio::fs::OpenOptions;
 use tokio::prelude::*;
+use speculum::{Cli, Speculum};
 
 #[allow(unused)]
 fn check_root() {
@@ -18,7 +18,7 @@ fn check_root() {
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     //check_root();
-    let options = cli::initialize();
+    let options = Cli::initialize();
 
     match options.verbose {
         1 => std::env::set_var("RUST_LOG", "speculum=info"),
