@@ -1,7 +1,6 @@
 use speculum::{Mirrors, Protocols};
 
-static JSON_STRING: &str = 
-        r#"
+static JSON_STRING: &str = r#"
         {
           "cutoff": 86400,
           "last_check": "2019-12-27T19:44:25.315Z",
@@ -65,17 +64,22 @@ static JSON_STRING: &str =
     "#;
 
 #[test]
-fn test_protocols()
-{
-    let p1 = Protocols {http: false, https: true, rsync: false};
-    let p2 = Protocols {http: true, https: false, rsync: false};
-
+fn test_protocols() {
+    let p1 = Protocols::from("http");
+    let p2 = Protocols::from("https");
+    let p3 = Protocols::from("http,https");
+    let p4 = Protocols::from("rsync");
     assert!(p1.intercects(p2) == false);
+    assert!(p1.intercects(p3) == true);
+    assert!(p2.intercects(p3) == true);
+    assert!(p3.intercects(p1) == true);
+    assert!(p3.intercects(p2) == true);
+    assert!(p4.intercects(p3) == false);
+    assert!(p3.intercects(p3) == true);
 }
 
 #[test]
-fn api()
-{
+fn api() {
     let mut mirrors: Mirrors = serde_json::from_str(JSON_STRING).unwrap();
 
     mirrors

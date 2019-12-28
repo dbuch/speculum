@@ -1,5 +1,5 @@
-use serde::Deserialize;
 use super::Protocols;
+use serde::Deserialize;
 
 impl ToString for Mirror {
     fn to_string(&self) -> String {

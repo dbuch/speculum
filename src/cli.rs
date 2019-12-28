@@ -29,11 +29,11 @@ pub struct Optional {
 
 impl Cli {
     pub fn initialize() -> Cli {
-//   let mut clap = Cli::clap();
+        //   let mut clap = Cli::clap();
 
-//    clap.gen_completions(env!("CARGO_PKG_NAME"), Shell::Bash, "target");
-//    clap.gen_completions(env!("CARGO_PKG_NAME"), Shell::Zsh, "target");
+        //    clap.gen_completions(env!("CARGO_PKG_NAME"), Shell::Bash, "target");
+        //    clap.gen_completions(env!("CARGO_PKG_NAME"), Shell::Zsh, "target");
 
-    Cli::from_args()
+        Cli::from_args()
     }
 }

@@ -19,15 +19,13 @@ impl Default for Protocols {
 }
 
 impl Protocols {
-    pub fn intercects(&self, other: Protocols) -> bool
-    {
+    pub fn intercects(&self, other: Protocols) -> bool {
         self.http & other.http || self.https & other.https || self.rsync & other.rsync
     }
 }
 
 impl From<&str> for Protocols {
-    fn from(s: &str) -> Self
-    {
+    fn from(s: &str) -> Self {
         let split = s.split(',').collect::<Vec<&str>>();
         Protocols {
             http: split.contains(&"http"),

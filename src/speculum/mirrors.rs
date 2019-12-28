@@ -22,8 +22,7 @@ impl<'a> Mirrors {
         self
     }
 
-    pub fn filter_protocols(&'a mut self, p: Protocols) -> &'a mut Self
-    {
+    pub fn filter_protocols(&'a mut self, p: Protocols) -> &'a mut Self {
         self.urls.retain(|url| url.protocol.intercects(p));
         self
     }

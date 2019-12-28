@@ -1,10 +1,9 @@
 use env_logger;
 use itertools::Itertools;
 use log::*;
+use speculum::{Cli, Speculum};
 use tokio::fs::OpenOptions;
 use tokio::prelude::*;
-use speculum::{Cli, Speculum};
-
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -29,9 +28,7 @@ async fn main() -> anyhow::Result<()> {
     let fetched: String = mirrors
         .into_iter()
         .filter(|mirror| mirror.score.is_some() && mirror.url.is_some())
-        .filter(|mirror| {
-            mirror.protocol.intercects(options.filters.protocols)
-        })
+        .filter(|mirror| mirror.protocol.intercects(options.filters.protocols))
         .sorted_by(|a, b| a.score.partial_cmp(&b.score).unwrap())
         .map(|m| m.to_string())
         .join("\n");

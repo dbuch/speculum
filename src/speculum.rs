@@ -1,11 +1,11 @@
-mod protocols;
-mod mirrors;
 mod mirror;
+mod mirrors;
+mod protocols;
 
 use reqwest::Client;
 
-pub use mirrors::Mirrors;
 pub use mirror::Mirror;
+pub use mirrors::Mirrors;
 pub use protocols::Protocols;
 
 static URL: &str = "https://www.archlinux.org/mirrors/status/json/";
