@@ -1,9 +1,6 @@
 use env_logger;
-use itertools::Itertools;
 use log::*;
 use speculum::{Cli, Speculum};
-use tokio::fs::OpenOptions;
-use tokio::prelude::*;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -21,26 +18,24 @@ async fn main() -> anyhow::Result<()> {
     env_logger::init();
 
     let speculum = Speculum::new();
-    let mirrors = speculum.fetch_mirrors().await?;
+    let mut mirrors = speculum.fetch_mirrors().await?;
 
     info!("Mirrors has been fetched!");
 
-    let fetched: String = mirrors
-        .into_iter()
-        .filter(|mirror| mirror.score.is_some() && mirror.url.is_some())
-        .filter(|mirror| mirror.protocol.intercects(options.filters.protocols))
-        .sorted_by(|a, b| a.score.partial_cmp(&b.score).unwrap())
-        .map(|m| m.to_string())
-        .join("\n");
-
-    let mut mirrorlist = OpenOptions::new()
-        .write(true)
-        .create(true)
-        .truncate(true)
-        .open(options.optional.save)
+    mirrors
+        .order_by(|a, b| a.score.partial_cmp(&b.score).unwrap())
+        .filter_protocols(options.filters.protocols)
+        .take(options.filters.latest)
+        .save(options.optional.save)
         .await?;
 
-    mirrorlist.write(fetched.as_bytes()).await?;
+    //let fetched: String = mirrors
+    //.into_iter()
+    //.filter(|mirror| mirror.score.is_some() && mirror.url.is_some())
+    //.filter(|mirror| mirror.protocol.intercects(options.filters.protocols))
+    //.sorted_by(|a, b| a.score.partial_cmp(&b.score).unwrap())
+    //.map(|m| m.to_string())
+    //.join("\n");
 
     Ok(())
 }

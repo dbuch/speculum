@@ -19,6 +19,9 @@ pub struct Filters {
     pub protocols: Protocols,
     #[structopt(short, long)]
     pub country: Option<String>,
+
+    #[structopt(short, long)]
+    pub latest: Option<usize>
 }
 
 #[derive(StructOpt, Debug)]
