@@ -1,18 +1,7 @@
 use speculum::{Mirrors, Protocols};
 
-#[test]
-fn test_protocols()
-{
-    let p1 = Protocols {http: false, https: true, rsync: false};
-    let p2 = Protocols {http: true, https: false, rsync: false};
-
-    assert!(p1.intercects(p2) == false);
-}
-
-#[tokio::test]
-async fn api()
-{
-    let mut mirrors: Mirrors = serde_json::from_str(r#"
+static JSON_STRING: &str = 
+        r#"
         {
           "cutoff": 86400,
           "last_check": "2019-12-27T19:44:25.315Z",
@@ -73,12 +62,25 @@ async fn api()
           ],
           "version": 3
         }
-    "#).unwrap();
+    "#;
+
+#[test]
+fn test_protocols()
+{
+    let p1 = Protocols {http: false, https: true, rsync: false};
+    let p2 = Protocols {http: true, https: false, rsync: false};
+
+    assert!(p1.intercects(p2) == false);
+}
+
+#[test]
+fn api()
+{
+    let mut mirrors: Mirrors = serde_json::from_str(JSON_STRING).unwrap();
 
     mirrors
         .filter_protocols(Protocols::from("http"))
         .order_by(|a, b| a.score.partial_cmp(&b.score).unwrap());
 
-    mirrors.into_iter().for_each(|m| println!("{:?}", m.score));
-
+    assert_eq!(mirrors.into_iter().len(), 1);
 }
