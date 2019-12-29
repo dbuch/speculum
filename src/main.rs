@@ -1,6 +1,5 @@
 use env_logger;
-use log::*;
-use speculum::{Cli, Speculum};
+use speculum::{Cli, Speculum, Mirrors};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -18,9 +17,7 @@ async fn main() -> anyhow::Result<()> {
     env_logger::init();
 
     let speculum = Speculum::new();
-    let mut mirrors = speculum.fetch_mirrors().await?;
-
-    info!("Mirrors has been fetched!");
+    let mut mirrors: Mirrors = speculum.fetch_mirrors().await?;
 
     mirrors
         .filter_active()

@@ -7,6 +7,9 @@ use std::path::Path;
 use tokio::fs::OpenOptions;
 use tokio::prelude::*;
 
+/// Contains information about Mirrors.
+/// 
+/// Filter actions and take is avalible throug this interface
 #[derive(Clone, Deserialize, Debug)]
 pub struct Mirrors {
     cutoff: u64,
