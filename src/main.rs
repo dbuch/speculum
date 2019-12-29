@@ -30,13 +30,5 @@ async fn main() -> anyhow::Result<()> {
         .save(options.optional.save)
         .await?;
 
-    //let fetched: String = mirrors
-    //.into_iter()
-    //.filter(|mirror| mirror.score.is_some() && mirror.url.is_some())
-    //.filter(|mirror| mirror.protocol.intercects(options.filters.protocols))
-    //.sorted_by(|a, b| a.score.partial_cmp(&b.score).unwrap())
-    //.map(|m| m.to_string())
-    //.join("\n");
-
     Ok(())
 }
