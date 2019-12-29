@@ -1,13 +1,15 @@
 use super::Protocols;
 use serde::Deserialize;
+use anyhow::Result;
 
+//TODO: We ought to have something smarter, like serialize implatation of mirrorlist
+//      It's a very simple format.
 impl ToString for Mirror {
     fn to_string(&self) -> String {
         format!("Server = {}$repo/os/$arch", &self.url.clone().unwrap())
     }
 }
 
-//TODO: Make these types more rusty, (ie. uri -> url::Url type)
 #[derive(Clone, Deserialize, Debug)]
 pub struct Mirror {
     pub url: Option<String>,
@@ -25,4 +27,12 @@ pub struct Mirror {
     pub ipv4: bool,
     pub ipv6: bool,
     pub details: Option<String>,
+}
+
+impl Mirror {
+    pub async fn rate(&self) -> Result<std::time::Duration>
+    {
+        //TODO: should rate, by downloading core.db
+        unimplemented!();
+    }
 }
