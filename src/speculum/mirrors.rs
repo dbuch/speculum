@@ -22,10 +22,15 @@ impl<'a> Mirrors {
     where
         F: FnMut(&Mirror, &Mirror) -> std::cmp::Ordering,
     {
-        self.urls.sort_by(order);
+        self.urls.sort_unstable_by(order);
         self
     }
 
+
+    pub fn filter_active(&'a mut self) -> &'a mut Self {
+        self.urls.retain(|url| url.score.is_some());
+        self
+    }
     pub fn filter_protocols(&'a mut self, p: Protocols) -> &'a mut Self {
         self.urls.retain(|url| url.protocol.intercects(p));
         self

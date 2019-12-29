@@ -23,6 +23,7 @@ async fn main() -> anyhow::Result<()> {
     info!("Mirrors has been fetched!");
 
     mirrors
+        .filter_active()
         .order_by(|a, b| a.score.partial_cmp(&b.score).unwrap())
         .filter_protocols(options.filters.protocols)
         .take(options.filters.latest)
