@@ -25,6 +25,23 @@ static JSON_STRING: &str = r#"
               "details": "https://www.archlinux.org/mirrors/aarnet.edu.au/5/"
             },
             {
+              "url": "https://mirror.aarnet.edu.au/pub/archlinux/",
+              "protocol": "https",
+              "last_sync": "2019-12-27T16:59:43Z",
+              "completion_pct": 0.9894736842105263,
+              "delay": 44304,
+              "duration_avg": 1.0432762389487409,
+              "duration_stddev": 0.510572728253044,
+              "score": 0.1,
+              "active": true,
+              "country": "Australia",
+              "country_code": "AU",
+              "isos": true,
+              "ipv4": true,
+              "ipv6": true,
+              "details": "https://www.archlinux.org/mirrors/aarnet.edu.au/5/"
+            },
+            {
               "url": "rsync://mirror.aarnet.edu.au/archlinux/",
               "protocol": "rsync",
               "last_sync": "2019-12-27T16:59:43Z",
@@ -81,6 +98,8 @@ fn test_protocols() {
 #[test]
 fn api() {
     let mut mirrors: Mirrors = serde_json::from_str(JSON_STRING).unwrap();
+
+    mirrors.get_urls_mut().retain(|url| url.score.is_some());
 
     mirrors
         .filter_protocols(Protocols::from("https"))

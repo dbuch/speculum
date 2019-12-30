@@ -15,13 +15,13 @@ pub struct Cli {
 }
 #[derive(StructOpt, Debug)]
 pub struct Filters {
-    #[structopt(short, long, default_value = "https,http,rsync")]
+    #[structopt(short, long, default_value = "https,http")]
     pub protocols: Protocols,
     #[structopt(short, long)]
     pub country: Option<String>,
 
-    #[structopt(short, long)]
-    pub latest: Option<usize>,
+    #[structopt(short, long, default_value = "30")]
+    pub latest: usize,
 }
 
 #[derive(StructOpt, Debug)]

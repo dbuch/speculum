@@ -29,21 +29,18 @@ impl<'a> Mirrors {
         self
     }
 
-
-    pub fn filter_active(&'a mut self) -> &'a mut Self {
-        self.urls.retain(|url| url.score.is_some());
-        self
+    pub fn get_urls_mut(&'a mut self) -> &'a mut Vec<Mirror>
+    {
+        self.urls.as_mut()
     }
+
     pub fn filter_protocols(&'a mut self, p: Protocols) -> &'a mut Self {
         self.urls.retain(|url| url.protocol.intercects(p));
         self
     }
 
-    pub fn take(&'a mut self, n: Option<usize>) -> &'a mut Self {
-        if let Some(n) = n {
-            let urls = &mut self.urls;
-            urls.truncate(n);
-        }
+    pub fn take(&'a mut self, n: usize) -> &'a mut Self {
+        self.get_urls_mut().truncate(n);
         self
     }
 

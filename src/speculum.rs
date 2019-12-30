@@ -3,6 +3,7 @@ mod mirrors;
 mod protocols;
 
 use reqwest::Client;
+use anyhow::Result;
 
 pub use mirror::Mirror;
 pub use mirrors::Mirrors;
@@ -21,7 +22,11 @@ impl Speculum {
         }
     }
 
-    pub async fn fetch_mirrors(&self) -> Result<Mirrors, reqwest::Error> {
-        self.client.get(URL).send().await?.json::<Mirrors>().await
+    pub async fn fetch_mirrors(&self) -> Result<Mirrors> {
+        let mut mirrors: Mirrors = self.client.get(URL).send().await?.json::<Mirrors>().await?;
+
+        mirrors.get_urls_mut().retain(|url| url.score.is_some() && url.active.unwrap());
+
+        Ok(mirrors)
     }
 }

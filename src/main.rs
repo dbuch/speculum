@@ -20,7 +20,6 @@ async fn main() -> anyhow::Result<()> {
     let mut mirrors: Mirrors = speculum.fetch_mirrors().await?;
 
     mirrors
-        .filter_active()
         .order_by(|a, b| a.score.partial_cmp(&b.score).unwrap())
         .filter_protocols(options.filters.protocols)
         .take(options.filters.latest)
