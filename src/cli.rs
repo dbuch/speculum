@@ -1,8 +1,8 @@
 use crate::speculum::Protocols;
 use std::path::PathBuf;
 //use structopt::clap::Shell;
-use structopt::StructOpt;
 use env_logger::Env;
+use structopt::StructOpt;
 
 #[derive(StructOpt, Debug)]
 pub struct Cli {
@@ -35,12 +35,11 @@ impl Cli {
     pub fn initialize() -> Cli {
         let cli = Cli::from_args();
 
-        let default_env_string = match cli.verbose
-        {
+        let default_env_string = match cli.verbose {
             1 => "info",
             2 => "debug",
             3 => "trace",
-            _ => ""
+            _ => "",
         };
 
         env_logger::from_env(Env::default().default_filter_or(default_env_string)).init();
