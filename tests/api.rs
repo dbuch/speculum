@@ -83,8 +83,8 @@ fn api() {
     let mut mirrors: Mirrors = serde_json::from_str(JSON_STRING).unwrap();
 
     mirrors
-        .filter_protocols(Protocols::from("http"))
+        .filter_protocols(Protocols::from("https"))
         .order_by(|a, b| a.score.partial_cmp(&b.score).unwrap());
 
-    assert_eq!(mirrors.into_iter().len(), 1);
+    assert_eq!(mirrors.len(), 1);
 }

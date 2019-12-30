@@ -66,4 +66,9 @@ impl<'a> Mirrors {
         file.sync_data().await?;
         Ok(())
     }
+
+    pub fn len(&self) -> usize
+    {
+        self.urls.len()
+    }
 }
