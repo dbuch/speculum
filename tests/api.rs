@@ -97,8 +97,8 @@ fn test_protocols() {
 
 #[test]
 fn api() {
-    let mut mirrors: Mirrors = serde_json::from_str(JSON_STRING).unwrap();
 
+    let mut mirrors: Mirrors = serde_json::from_str(JSON_STRING).unwrap();
     mirrors.get_urls_mut().retain(|url| url.score.is_some());
 
     mirrors
