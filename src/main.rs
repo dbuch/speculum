@@ -21,8 +21,8 @@ async fn main() -> Result<()> {
     let mut mirrors: Mirrors = speculum.fetch_mirrors().await?;
 
     mirrors
-        .order_by(|a, b| a.score.partial_cmp(&b.score).unwrap())
         .filter_protocols(options.filters.protocols)
+        .order_by(|a, b| a.score.partial_cmp(&b.score).unwrap())
         .take(options.filters.latest)
         .save(options.optional.save)
         .await?;
