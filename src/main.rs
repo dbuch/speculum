@@ -1,8 +1,9 @@
 use env_logger;
 use speculum::{Cli, Speculum, Mirrors};
+use anyhow::Result;
 
 #[tokio::main]
-async fn main() -> anyhow::Result<()> {
+async fn main() -> Result<()> {
     let options = Cli::initialize();
 
     match options.verbose {
