@@ -2,6 +2,7 @@ use crate::speculum::Protocols;
 use std::path::PathBuf;
 //use structopt::clap::Shell;
 use structopt::StructOpt;
+use env_logger::Env;
 
 #[derive(StructOpt, Debug)]
 pub struct Cli {
@@ -32,11 +33,22 @@ pub struct Optional {
 
 impl Cli {
     pub fn initialize() -> Cli {
+        let cli = Cli::from_args();
+
+        let default_env_string = match cli.verbose
+        {
+            1 => "info",
+            2 => "debug",
+            3 => "trace",
+            _ => ""
+        };
+
+        env_logger::from_env(Env::default().default_filter_or(default_env_string)).init();
         //   let mut clap = Cli::clap();
 
         //    clap.gen_completions(env!("CARGO_PKG_NAME"), Shell::Bash, "target");
         //    clap.gen_completions(env!("CARGO_PKG_NAME"), Shell::Zsh, "target");
 
-        Cli::from_args()
+        cli
     }
 }
