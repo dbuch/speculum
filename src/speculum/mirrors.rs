@@ -8,7 +8,7 @@ use tokio::fs::OpenOptions;
 use tokio::prelude::*;
 
 /// Contains information about Mirrors.
-/// 
+///
 /// Filter actions and take is avalible throug this interface
 #[derive(Clone, Deserialize, Debug)]
 pub struct Mirrors {
@@ -29,8 +29,7 @@ impl<'a> Mirrors {
         self
     }
 
-    pub fn get_urls_mut(&'a mut self) -> &'a mut Vec<Mirror>
-    {
+    pub fn get_urls_mut(&'a mut self) -> &'a mut Vec<Mirror> {
         self.urls.as_mut()
     }
 
@@ -64,8 +63,7 @@ impl<'a> Mirrors {
         Ok(())
     }
 
-    pub fn len(&self) -> usize
-    {
+    pub fn len(&self) -> usize {
         self.urls.len()
     }
 }

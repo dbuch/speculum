@@ -1,6 +1,6 @@
 use super::Protocols;
-use serde::Deserialize;
 use anyhow::Result;
+use serde::Deserialize;
 
 //TODO: We ought to have something smarter, like serialize implatation of mirrorlist
 //      It's a very simple format.
@@ -30,8 +30,7 @@ pub struct Mirror {
 }
 
 impl Mirror {
-    pub async fn rate(&self) -> Result<std::time::Duration>
-    {
+    pub async fn rate(&self) -> Result<std::time::Duration> {
         //TODO: should rate, by downloading core.db
         unimplemented!();
     }

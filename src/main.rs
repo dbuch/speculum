@@ -1,6 +1,6 @@
-use env_logger;
-use speculum::{Cli, Speculum, Mirrors};
 use anyhow::Result;
+use env_logger;
+use speculum::{Cli, Mirrors, Speculum};
 
 #[tokio::main]
 async fn main() -> Result<()> {
