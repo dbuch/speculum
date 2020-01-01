@@ -1,7 +1,4 @@
-use crate::{
-    Protocols,
-    Result,
-};
+use crate::{Protocols, Result};
 use serde::Deserialize;
 
 //TODO: We ought to have something smarter, like serialize implatation of mirrorlist

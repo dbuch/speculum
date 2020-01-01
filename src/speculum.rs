@@ -17,12 +17,10 @@ pub struct Speculum {
     client: reqwest::Client,
 }
 
-impl Default for Speculum
-{
-    fn default() -> Self
-    {
+impl Default for Speculum {
+    fn default() -> Self {
         Speculum {
-            client: Client::new()
+            client: Client::new(),
         }
     }
 }

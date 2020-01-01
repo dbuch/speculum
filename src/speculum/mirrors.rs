@@ -1,8 +1,4 @@
-use crate::{
-    Mirror,
-    Protocols,
-    Result,
-};
+use crate::{Mirror, Protocols, Result};
 
 use serde::Deserialize;
 use std::path::Path;

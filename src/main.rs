@@ -1,4 +1,4 @@
-use speculum::{Cli, Mirrors, Speculum, Result};
+use speculum::{Cli, Mirrors, Result, Speculum};
 
 #[tokio::main]
 async fn main() -> Result<()> {
