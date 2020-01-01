@@ -15,11 +15,19 @@ pub struct Speculum {
     client: reqwest::Client,
 }
 
+impl Default for Speculum
+{
+    fn default() -> Self
+    {
+        Speculum {
+            client: Client::new()
+        }
+    }
+}
+
 impl Speculum {
     pub fn new() -> Self {
-        Speculum {
-            client: Client::new(),
-        }
+        Self::default()
     }
 
     pub async fn fetch_mirrors(&self) -> Result<Mirrors> {
