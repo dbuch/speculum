@@ -2,8 +2,10 @@ mod mirror;
 mod mirrors;
 mod protocols;
 
-use anyhow::Result;
 use reqwest::Client;
+
+pub type Result<T> = anyhow::Result<T>;
+pub type Error = anyhow::Error;
 
 pub use mirror::Mirror;
 pub use mirrors::Mirrors;

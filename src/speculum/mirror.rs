@@ -1,5 +1,5 @@
 use super::Protocols;
-use anyhow::Result;
+use super::Result;
 use serde::Deserialize;
 
 //TODO: We ought to have something smarter, like serialize implatation of mirrorlist
