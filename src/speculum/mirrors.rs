@@ -1,11 +1,13 @@
-use crate::Mirror;
-use crate::Protocols;
+use crate::{
+    Mirror,
+    Protocols,
+    Result,
+};
 
 use serde::Deserialize;
 use std::path::Path;
 use tokio::fs::OpenOptions;
 use tokio::prelude::*;
-use super::Result;
 
 /// Contains information about Mirrors.
 ///
