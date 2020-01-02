@@ -36,8 +36,8 @@ impl Cli {
         let mut logger_builder = env_logger::builder();
 
         let level = match cli.verbose {
-            0 => log::LevelFilter::Warn,
-            1 => log::LevelFilter::Info,
+            0 => log::LevelFilter::Info,
+            1 => log::LevelFilter::Warn,
             2 => log::LevelFilter::Debug,
             _ => log::LevelFilter::Trace,
         };

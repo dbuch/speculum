@@ -1,4 +1,4 @@
-use speculum::{Cli, Mirrors, Result, Speculum};
+use speculum::{Cli, Result, Speculum};
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -7,9 +7,9 @@ async fn main() -> Result<()> {
     log::trace!("Started");
 
     let speculum = Speculum::new();
-    let mut mirrors: Mirrors = speculum.fetch_mirrors().await?;
 
-    mirrors
+    speculum
+        .fetch_mirrors().await?
         .filter_protocols(options.filters.protocols)
         .order_by(|a, b| a.score.partial_cmp(&b.score).unwrap())
         .take(options.filters.latest)
