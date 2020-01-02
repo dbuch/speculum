@@ -2,7 +2,9 @@ use speculum::{Cli, Mirrors, Result, Speculum};
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let options = Cli::initialize();
+    let options = Cli::initialize()?;
+
+    log::trace!("Started");
 
     let speculum = Speculum::new();
     let mut mirrors: Mirrors = speculum.fetch_mirrors().await?;
@@ -13,6 +15,7 @@ async fn main() -> Result<()> {
         .take(options.filters.latest)
         .save(options.optional.save)
         .await?;
+
 
     Ok(())
 }

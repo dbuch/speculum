@@ -1,7 +1,6 @@
-use crate::speculum::Protocols;
+use crate::speculum::{Protocols, Result};
 use std::path::PathBuf;
 //use structopt::clap::Shell;
-use env_logger::Env;
 use structopt::StructOpt;
 
 #[derive(StructOpt, Debug)]
@@ -32,22 +31,25 @@ pub struct Optional {
 }
 
 impl Cli {
-    pub fn initialize() -> Cli {
+    pub fn initialize() -> Result<Cli> {
         let cli = Cli::from_args();
+        let mut logger_builder = env_logger::builder();
 
-        let default_env_string = match cli.verbose {
-            1 => "info",
-            2 => "debug",
-            3 => "trace",
-            _ => "",
+        let level = match cli.verbose {
+            0 => log::LevelFilter::Warn,
+            1 => log::LevelFilter::Info,
+            2 => log::LevelFilter::Debug,
+            _ => log::LevelFilter::Trace,
         };
 
-        env_logger::from_env(Env::default().default_filter_or(default_env_string)).init();
+        logger_builder.filter(Some("speculum"), level);
+        logger_builder.try_init()?;
+
         //   let mut clap = Cli::clap();
 
         //    clap.gen_completions(env!("CARGO_PKG_NAME"), Shell::Bash, "target");
         //    clap.gen_completions(env!("CARGO_PKG_NAME"), Shell::Zsh, "target");
 
-        cli
+        Ok(cli)
     }
 }
