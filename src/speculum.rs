@@ -2,7 +2,14 @@ mod mirror;
 mod mirrors;
 mod protocols;
 
+use anyhow::anyhow;
+use dirs::cache_dir;
+use log::info;
 use reqwest::Client;
+use tokio::{
+    fs,
+    io::{AsyncReadExt, AsyncWriteExt, BufReader},
+};
 
 pub type Result<T> = anyhow::Result<T>;
 pub type Error = anyhow::Error;
@@ -30,8 +37,41 @@ impl Speculum {
         Self::default()
     }
 
+    async fn get_cache_file(&self) -> Result<fs::File> {
+        let mut cached = cache_dir().unwrap();
+        cached.push("mirrorstatus.json");
+        let result = fs::OpenOptions::new()
+            .read(true)
+            .write(true)
+            .create(true)
+            .open(cached)
+            .await;
+        result.map_err(|e| anyhow!(e))
+    }
+
     pub async fn fetch_mirrors(&self) -> Result<Mirrors> {
-        let mut mirrors: Mirrors = self.client.get(URL).send().await?.json::<Mirrors>().await?;
+        let mut cache_file = self.get_cache_file().await?;
+
+        let meta = &cache_file.metadata().await;
+        if let Ok(m) = meta {
+            let duration = std::time::SystemTime::now().duration_since(m.modified()?)?;
+
+            info!("Cache {:?}", duration);
+            if duration.as_secs() > 300 {
+                info!("Found valid cache");
+                let mut content: Vec<u8> = Vec::new();
+
+                cache_file.read_to_end(&mut content).await?;
+                let mirrors: Mirrors = serde_json::from_str(std::str::from_utf8(&content)?)?;
+                return Ok(mirrors);
+            }
+        }
+
+        let mirrors_status = self.client.get(URL).send().await?;
+        let mirrors_bytes = mirrors_status.text().await?;
+        cache_file.write_all(mirrors_bytes.as_bytes()).await?;
+
+        let mut mirrors: Mirrors = serde_json::from_str(&mirrors_bytes)?;
         mirrors
             .get_urls_mut()
             .retain(|url| url.score.is_some() && url.active.unwrap());
