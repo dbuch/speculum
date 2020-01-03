@@ -1,6 +1,5 @@
 use crate::speculum::{Protocols, Result};
 use std::path::PathBuf;
-//use structopt::clap::Shell;
 use structopt::StructOpt;
 
 #[derive(StructOpt, Debug)]
