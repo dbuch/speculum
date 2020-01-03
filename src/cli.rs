@@ -45,11 +45,6 @@ impl Cli {
         logger_builder.filter(Some("speculum"), level);
         logger_builder.try_init()?;
 
-        //   let mut clap = Cli::clap();
-
-        //    clap.gen_completions(env!("CARGO_PKG_NAME"), Shell::Bash, "target");
-        //    clap.gen_completions(env!("CARGO_PKG_NAME"), Shell::Zsh, "target");
-
         Ok(cli)
     }
 }
