@@ -5,7 +5,7 @@ use serde::Deserialize;
 //      It's a very simple format.
 impl ToString for Mirror {
     fn to_string(&self) -> String {
-        format!("Server = {}$repo/os/$arch", &self.url.clone().unwrap())
+        format!("Server = {}$repo/os/$arch", self.url.clone().unwrap())
     }
 }
 

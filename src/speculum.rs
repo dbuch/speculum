@@ -6,6 +6,7 @@ use anyhow::anyhow;
 use dirs::cache_dir;
 use log::info;
 use reqwest::Client;
+use std::str::from_utf8;
 use std::time::SystemTime;
 use tokio::{
     fs,
@@ -58,15 +59,17 @@ impl Speculum {
             let cache_age = SystemTime::now().duration_since(m.modified()?)?;
 
             info!("Cache {:?}", cache_age);
-            if cache_age.as_secs() > 300 {
+            if cache_age.as_secs() < 300 {
                 info!("Found valid cache");
                 let mut content: Vec<u8> = Vec::new();
 
                 cache_file.read_to_end(&mut content).await?;
-                let mirrors: Mirrors = serde_json::from_str(std::str::from_utf8(&content)?)?;
+                let mirrors: Mirrors = serde_json::from_str(from_utf8(&content)?)?;
                 return Ok(mirrors);
             }
         }
+
+        info!("Fetch new and store cache");
 
         let mirrors_status = self.client.get(URL).send().await?;
         let mirrors_bytes = mirrors_status.text().await?;
