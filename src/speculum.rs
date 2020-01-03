@@ -6,9 +6,10 @@ use anyhow::anyhow;
 use dirs::cache_dir;
 use log::info;
 use reqwest::Client;
+use std::time::SystemTime;
 use tokio::{
     fs,
-    io::{AsyncReadExt, AsyncWriteExt, BufReader},
+    io::{AsyncReadExt, AsyncWriteExt},
 };
 
 pub type Result<T> = anyhow::Result<T>;
@@ -54,10 +55,10 @@ impl Speculum {
 
         let meta = &cache_file.metadata().await;
         if let Ok(m) = meta {
-            let duration = std::time::SystemTime::now().duration_since(m.modified()?)?;
+            let cache_age = SystemTime::now().duration_since(m.modified()?)?;
 
-            info!("Cache {:?}", duration);
-            if duration.as_secs() > 300 {
+            info!("Cache {:?}", cache_age);
+            if cache_age.as_secs() > 300 {
                 info!("Found valid cache");
                 let mut content: Vec<u8> = Vec::new();
 
