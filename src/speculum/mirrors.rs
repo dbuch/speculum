@@ -4,7 +4,6 @@ use serde::Deserialize;
 use std::path::Path;
 use tokio::fs::OpenOptions;
 use tokio::prelude::*;
-use log::trace;
 
 /// Contains information about Mirrors.
 ///
@@ -24,7 +23,6 @@ impl<'a> Mirrors {
     where
         F: FnMut(&Mirror, &Mirror) -> std::cmp::Ordering,
     {
-        trace!("order_by");
         self.urls.sort_unstable_by(order);
         self
     }
@@ -34,19 +32,16 @@ impl<'a> Mirrors {
     }
 
     pub fn filter_protocols(&'a mut self, p: Protocols) -> &'a mut Self {
-        trace!("Filter protocols");
         self.urls.retain(|url| url.protocol.intercects(p));
         self
     }
 
     pub fn take(&'a mut self, n: usize) -> &'a mut Self {
-        trace!("Take");
         self.get_urls_mut().truncate(n);
         self
     }
 
     pub async fn save<P: AsRef<Path>>(&'a mut self, path: P) -> Result<()> {
-        trace!("save");
         let urls = &self.urls;
         let mut file = OpenOptions::new()
             .create(true)

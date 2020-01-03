@@ -7,7 +7,7 @@ use dirs::cache_dir;
 use log::info;
 use reqwest::Client;
 use std::str::from_utf8;
-use std::time::SystemTime;
+use std::time::{SystemTime, Duration};
 use tokio::{
     fs,
     io::{AsyncReadExt, AsyncWriteExt},
@@ -59,12 +59,15 @@ impl Speculum {
             let cache_age = SystemTime::now().duration_since(m.modified()?)?;
 
             info!("Cache {:?}", cache_age);
-            if cache_age.as_secs() < 300 {
+            if cache_age < Duration::from_secs(300) {
                 info!("Found valid cache");
                 let mut content: Vec<u8> = Vec::new();
 
                 cache_file.read_to_end(&mut content).await?;
-                let mirrors: Mirrors = serde_json::from_str(from_utf8(&content)?)?;
+                let mut mirrors: Mirrors = serde_json::from_str(from_utf8(&content)?)?;
+                mirrors
+                    .get_urls_mut()
+                    .retain(|url| url.score.is_some());
                 return Ok(mirrors);
             }
         }
@@ -78,7 +81,7 @@ impl Speculum {
         let mut mirrors: Mirrors = serde_json::from_str(&mirrors_bytes)?;
         mirrors
             .get_urls_mut()
-            .retain(|url| url.score.is_some() && url.active.unwrap());
+            .retain(|url| url.score.is_some());
         Ok(mirrors)
     }
 }
