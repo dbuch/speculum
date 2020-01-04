@@ -2,16 +2,14 @@ mod mirror;
 mod mirrors;
 mod protocols;
 
+use anyhow::bail;
 use dirs::cache_dir;
 use log::info;
 use reqwest::Client;
 use std::io::ErrorKind;
 use std::path::PathBuf;
 use std::time::{Duration, SystemTime};
-use tokio::{
-    fs,
-    io::AsyncWriteExt,
-};
+use tokio::{fs, io::AsyncWriteExt};
 
 pub type Result<T> = anyhow::Result<T>;
 pub type Error = anyhow::Error;
@@ -51,12 +49,12 @@ impl Speculum {
     }
 
     pub fn get_cache_path(&self) -> Result<PathBuf> {
-        if let Some(mut path) = cache_dir()
-        {
+        if let Some(mut path) = cache_dir() {
             path.push("mirrorstatus.json");
             return Ok(path);
         }
-        Err(anyhow::anyhow!("Unable to get user cache directory"))
+
+        bail!("Unable to get user cache directory")
     }
 
     pub async fn fetch_mirrors(&self) -> Result<Mirrors> {
@@ -70,7 +68,7 @@ impl Speculum {
                 duration_since > Duration::from_secs(self.cache_age)
             }
             Err(e) if e.kind() == ErrorKind::NotFound => true,
-            Err(_) => true,
+            Err(e) => bail!(e)
         };
 
         let mut mirrors: Mirrors = if invalid {
