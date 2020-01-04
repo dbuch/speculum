@@ -4,7 +4,7 @@ use speculum::{Cli, Mirrors, Result, Speculum};
 async fn main() -> Result<()> {
     let options = Cli::initialize()?;
 
-    let speculum = Speculum::new();
+    let speculum = Speculum::new()?;
     let mut mirrors: Mirrors = speculum.fetch_mirrors().await?;
 
     mirrors
