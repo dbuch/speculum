@@ -7,11 +7,10 @@ use log::info;
 use reqwest::Client;
 use std::io::ErrorKind;
 use std::path::PathBuf;
-use std::str::from_utf8;
 use std::time::{Duration, SystemTime};
 use tokio::{
     fs,
-    io::{AsyncReadExt, AsyncWriteExt},
+    io::AsyncWriteExt,
 };
 
 pub type Result<T> = anyhow::Result<T>;
@@ -89,11 +88,7 @@ impl Speculum {
             file.write_all(request.as_bytes()).await?;
             serde_json::from_str(&request)?
         } else {
-            info!("Using cache");
-            let mut file = fs::File::open(cache_path).await?;
-            let mut buf: Vec<u8> = Vec::new();
-            file.read_to_end(&mut buf).await?;
-            serde_json::from_str(from_utf8(&buf)?)?
+            Mirrors::load_from(cache_path).await?
         };
 
         mirrors.get_urls_mut().retain(|url| url.score.is_some());

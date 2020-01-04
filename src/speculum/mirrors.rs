@@ -18,6 +18,15 @@ pub struct Mirrors {
     version: u64,
 }
 
+impl Mirrors {
+    pub async fn load_from<P: AsRef<std::path::Path>>(path: P) -> Result<Mirrors> {
+        let mut file = tokio::fs::File::open(path).await?;
+        let mut buf: Vec<u8> = Vec::new();
+        file.read_to_end(&mut buf).await?;
+        Ok(serde_json::from_str(std::str::from_utf8(&buf)?)?)
+    }
+}
+
 impl<'a> Mirrors {
     pub fn order_by<F>(&'a mut self, order: F) -> &'a mut Self
     where
