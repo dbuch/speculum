@@ -50,14 +50,17 @@ impl Speculum {
         })
     }
 
-    pub fn get_cache_path(&self) -> PathBuf {
-        let mut path = cache_dir().unwrap_or_default();
-        path.push("mirrorstatus.json");
-        path
+    pub fn get_cache_path(&self) -> Result<PathBuf> {
+        if let Some(mut path) = cache_dir()
+        {
+            path.push("mirrorstatus.json");
+            return Ok(path);
+        }
+        Err(anyhow::anyhow!("Unable to get user cache directory"))
     }
 
     pub async fn fetch_mirrors(&self) -> Result<Mirrors> {
-        let cache_path = self.get_cache_path();
+        let cache_path = self.get_cache_path()?;
 
         let metadata = fs::metadata(&cache_path).await;
         let invalid = match metadata {
