@@ -6,8 +6,10 @@ use anyhow::anyhow;
 use dirs::cache_dir;
 use log::info;
 use reqwest::Client;
+use std::io::ErrorKind;
+use std::path::PathBuf;
 use std::str::from_utf8;
-use std::time::{SystemTime, Duration};
+use std::time::{Duration, SystemTime};
 use tokio::{
     fs,
     io::{AsyncReadExt, AsyncWriteExt},
@@ -39,49 +41,53 @@ impl Speculum {
         Self::default()
     }
 
-    async fn get_cache_file(&self) -> Result<fs::File> {
-        let mut cached = cache_dir().unwrap();
-        cached.push("mirrorstatus.json");
-        let result = fs::OpenOptions::new()
-            .read(true)
-            .write(true)
-            .create(true)
-            .open(cached)
-            .await;
-        result.map_err(|e| anyhow!(e))
+    fn get_cache_path(&self) -> PathBuf {
+        let mut path = cache_dir().unwrap_or_default();
+        path.push("mirrorstatus.json");
+        path
     }
 
     pub async fn fetch_mirrors(&self) -> Result<Mirrors> {
-        let mut cache_file = self.get_cache_file().await?;
+        let cache_path = self.get_cache_path();
 
-        let meta = &cache_file.metadata().await;
-        if let Ok(m) = meta {
-            let cache_age = SystemTime::now().duration_since(m.modified()?)?;
-
-            info!("Cache {:?}", cache_age);
-            if cache_age < Duration::from_secs(300) {
-                info!("Found valid cache");
-                let mut content: Vec<u8> = Vec::new();
-
-                cache_file.read_to_end(&mut content).await?;
-                let mut mirrors: Mirrors = serde_json::from_str(from_utf8(&content)?)?;
-                mirrors
-                    .get_urls_mut()
-                    .retain(|url| url.score.is_some());
-                return Ok(mirrors);
+        let metadata = fs::metadata(&cache_path).await;
+        let invalid = match metadata {
+            Ok(meta) => {
+                let duration_since = SystemTime::now().duration_since(meta.modified()?)?;
+                info!("{:?}", duration_since);
+                duration_since > Duration::from_secs(300)
             }
-        }
+            Err(e) if e.kind() == ErrorKind::NotFound => true,
+            Err(_) => true,
+        };
 
-        info!("Fetch new and store cache");
+        let mut mirrors: Mirrors = if invalid {
+            info!("Using new");
+            let mut file = fs::OpenOptions::new()
+                .create(true)
+                .write(true)
+                .truncate(true)
+                .open(&cache_path)
+                .await?;
+            let request = self
+                .client
+                .get(URL)
+                .send()
+                .await?
+                .text_with_charset("UTF-8")
+                .await?;
+            file.write_all(request.as_bytes()).await?;
+            serde_json::from_str(&request)?
+        } else {
+            info!("Using cache");
+            let mut file = fs::File::open(cache_path).await?;
+            let mut buf: Vec<u8> = Vec::new();
+            file.read_to_end(&mut buf).await?;
+            serde_json::from_str(from_utf8(&buf)?)?
+        };
 
-        let mirrors_status = self.client.get(URL).send().await?;
-        let mirrors_bytes = mirrors_status.text().await?;
-        cache_file.write_all(mirrors_bytes.as_bytes()).await?;
+        mirrors.get_urls_mut().retain(|url| url.score.is_some());
 
-        let mut mirrors: Mirrors = serde_json::from_str(&mirrors_bytes)?;
-        mirrors
-            .get_urls_mut()
-            .retain(|url| url.score.is_some());
         Ok(mirrors)
     }
 }
