@@ -50,7 +50,7 @@ impl Speculum {
         })
     }
 
-    fn get_cache_path(&self) -> PathBuf {
+    pub fn get_cache_path(&self) -> PathBuf {
         let mut path = cache_dir().unwrap_or_default();
         path.push("mirrorstatus.json");
         path
