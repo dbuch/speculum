@@ -22,14 +22,14 @@ static URL: &str = "https://www.archlinux.org/mirrors/status/json/";
 
 pub struct Speculum {
     client: reqwest::Client,
-    cache_age: u64,
+    cache_timeout: u64,
 }
 
 impl Default for Speculum {
     fn default() -> Self {
         Speculum {
             client: Client::new(),
-            cache_age: 300,
+            cache_timeout: 300,
         }
     }
 }
@@ -44,7 +44,7 @@ impl Speculum {
             client: Client::builder()
                 .connect_timeout(Duration::from_secs(connection_timeout))
                 .build()?,
-            cache_age: Speculum::default().cache_age,
+            cache_timeout: Speculum::default().cache_timeout,
         })
     }
 
@@ -63,12 +63,11 @@ impl Speculum {
         let metadata = fs::metadata(&cache_path).await;
         let invalid = match metadata {
             Ok(meta) => {
-                let duration_since = SystemTime::now().duration_since(meta.modified()?)?;
-                info!("{:?}", duration_since);
-                duration_since > Duration::from_secs(self.cache_age)
+                SystemTime::now().duration_since(meta.modified()?)?
+                    > Duration::from_secs(self.cache_timeout)
             }
             Err(e) if e.kind() == ErrorKind::NotFound => true,
-            Err(e) => bail!(e)
+            Err(e) => bail!(e),
         };
 
         let mut mirrors: Mirrors = if invalid {

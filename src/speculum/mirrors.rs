@@ -25,6 +25,10 @@ impl Mirrors {
         file.read_to_end(&mut buf).await?;
         Ok(serde_json::from_str(std::str::from_utf8(&buf)?)?)
     }
+
+    pub fn load_from_buf<P: AsRef<[u8]>>(buf: P) -> Result<Mirrors> {
+        Ok(serde_json::from_str(std::str::from_utf8(buf.as_ref())?)?)
+    }
 }
 
 impl<'a> Mirrors {

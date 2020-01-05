@@ -27,6 +27,10 @@ pub struct Filters {
 pub struct Optional {
     #[structopt(long, default_value = "/etc/pacman.d/mirrorlist", parse(from_os_str))]
     pub save: PathBuf,
+    #[structopt(long, short, default_value = "300")]
+    pub cache_timeout: u64,
+    #[structopt(long, short, default_value = "300")]
+    pub connection_timeout: u64,
 }
 
 impl Cli {

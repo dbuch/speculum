@@ -14,6 +14,5 @@ async fn main() -> Result<()> {
         .save(options.optional.save)
         .await?;
 
-
     Ok(())
 }
