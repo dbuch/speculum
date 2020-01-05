@@ -2,6 +2,7 @@ use crate::speculum::{Protocols, Result};
 use std::path::PathBuf;
 use structopt::StructOpt;
 
+/// Hello world
 #[derive(StructOpt, Debug)]
 pub struct Cli {
     #[structopt(flatten)]
@@ -9,28 +10,37 @@ pub struct Cli {
     #[structopt(flatten)]
     pub optional: Optional,
 
+    /// Increase verbosity (i.e. "-vvv" gives LogLevel::Debug)
     #[structopt(short, long, parse(from_occurrences))]
     pub verbose: u8,
 }
 #[derive(StructOpt, Debug)]
 pub struct Filters {
-    #[structopt(short, long, default_value = "https,http")]
+    /// Connection protocol
+    #[structopt(long, default_value = "https,http")]
     pub protocols: Protocols,
-    #[structopt(short, long)]
+    /// Country code (i.e. "en" or "us")
+    #[structopt(long)]
     pub country: Option<String>,
 
-    #[structopt(short, long, default_value = "30")]
+    #[structopt(long, default_value = "30")]
     pub latest: usize,
 }
 
 #[derive(StructOpt, Debug)]
 pub struct Optional {
+    /// Saves the recieved mirrorlist in pacman format
     #[structopt(long, default_value = "/etc/pacman.d/mirrorlist", parse(from_os_str))]
     pub save: PathBuf,
-    #[structopt(long, short, default_value = "300")]
+    /// The time before cache is invalidated (in secs [s])
+    #[structopt(long, default_value = "300")]
     pub cache_timeout: u64,
-    #[structopt(long, short, default_value = "300")]
+    /// The time before connection is invalidated (in secs [s])
+    #[structopt(long, default_value = "5")]
     pub connection_timeout: u64,
+    /// Logging filter
+    #[structopt(long, default_value = "speculum")]
+    pub module_log: String,
 }
 
 impl Cli {
@@ -42,10 +52,11 @@ impl Cli {
             0 => log::LevelFilter::Warn,
             1 => log::LevelFilter::Info,
             2 => log::LevelFilter::Debug,
-            _ => log::LevelFilter::Trace,
+            3 => log::LevelFilter::Trace,
+            _ => log::LevelFilter::max(),
         };
 
-        logger_builder.filter(Some("speculum"), level);
+        logger_builder.filter(Some(&cli.optional.module_log), level);
         logger_builder.try_init()?;
 
         Ok(cli)
