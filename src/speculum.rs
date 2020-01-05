@@ -72,7 +72,6 @@ impl Speculum {
         };
 
         let mut mirrors: Mirrors = if invalid {
-            info!("Using new");
             let mut file = fs::OpenOptions::new()
                 .create(true)
                 .write(true)
