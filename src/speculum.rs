@@ -1,6 +1,7 @@
 mod mirror;
 mod mirrors;
 mod protocols;
+mod utils;
 
 use anyhow::bail;
 use dirs::cache_dir;
