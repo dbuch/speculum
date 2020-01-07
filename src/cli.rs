@@ -2,7 +2,6 @@ use crate::speculum::{Protocols, Result};
 use std::path::PathBuf;
 use structopt::StructOpt;
 
-/// Hello world
 #[derive(StructOpt, Debug)]
 pub struct Cli {
     #[structopt(flatten)]

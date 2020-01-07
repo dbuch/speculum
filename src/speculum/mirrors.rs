@@ -55,6 +55,7 @@ impl<'a> Mirrors {
         self
     }
 
+    /// Saves the recieved mirrorlist in pacman format
     pub async fn save<P: AsRef<Path>>(&'a mut self, path: P) -> Result<()> {
         let urls = &self.urls;
         let mut file = OpenOptions::new()

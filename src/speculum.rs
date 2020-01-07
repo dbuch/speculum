@@ -5,7 +5,6 @@ mod utils;
 
 use anyhow::bail;
 use dirs::cache_dir;
-use log::info;
 use reqwest::Client;
 use std::io::ErrorKind;
 use std::path::PathBuf;
@@ -21,6 +20,7 @@ pub use protocols::Protocols;
 
 static URL: &str = "https://www.archlinux.org/mirrors/status/json/";
 
+/// Toplevel object to receieve mirror status
 pub struct Speculum {
     client: reqwest::Client,
     cache_timeout: u64,
