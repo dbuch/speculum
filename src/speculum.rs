@@ -9,7 +9,8 @@ use reqwest::Client;
 use std::io::ErrorKind;
 use std::path::PathBuf;
 use std::time::{Duration, SystemTime};
-use tokio::{fs, io::AsyncWriteExt};
+use tokio::fs;
+use tokio::prelude::*;
 
 pub type Result<T> = anyhow::Result<T>;
 pub type Error = anyhow::Error;
