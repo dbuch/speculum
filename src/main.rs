@@ -6,6 +6,7 @@ async fn main() -> Result<()> {
 
     let speculum = Speculum::new()?;
     let mut mirrors: Mirrors = speculum.fetch_mirrors().await?;
+    let mut stdout = tokio::io::stdout();
 
     mirrors
         .filter_protocols(options.filters.protocols)
@@ -16,8 +17,9 @@ async fn main() -> Result<()> {
                 .then(a.last_sync.cmp(&b.last_sync))
         })
         .take(options.filters.latest)
-        .save(options.optional.save)
+        .write(&mut stdout)
         .await?;
+
 
     Ok(())
 }

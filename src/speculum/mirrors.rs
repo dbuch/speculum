@@ -76,6 +76,16 @@ impl<'a> Mirrors {
         Ok(())
     }
 
+    pub async fn write<W: AsyncWrite + Unpin>(&self, fd: &mut W) -> Result<()>
+    {
+        let urls = &self.urls;
+        for url in urls.into_iter()
+        {
+            fd.write(format!("{}\n", &url.to_string()).as_bytes()).await?;
+        }
+        Ok(())
+    }
+
     pub fn len(&self) -> usize {
         self.urls.len()
     }
