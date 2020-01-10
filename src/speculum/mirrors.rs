@@ -5,6 +5,7 @@ use std::path::Path;
 use tokio::fs::OpenOptions;
 use tokio::prelude::*;
 use std::str::from_utf8;
+use log::*;
 
 /// Contains information about Mirrors.
 ///

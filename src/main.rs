@@ -1,3 +1,4 @@
+use log::*;
 use speculum::{Cli, Mirrors, Result, Speculum};
 
 #[tokio::main]
@@ -19,7 +20,6 @@ async fn main() -> Result<()> {
         .take(options.filters.latest)
         .write(&mut stdout)
         .await?;
-
 
     Ok(())
 }

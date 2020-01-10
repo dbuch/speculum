@@ -1,5 +1,9 @@
 use crate::{Protocols, Result};
 use serde::Deserialize;
+use std::pin::Pin;
+use std::task::{Context, Poll};
+use tokio::io;
+use tokio::prelude::*;
 
 //TODO: We ought to have something smarter, like serialize implatation of mirrorlist
 //      It's a very simple format.
@@ -32,5 +36,23 @@ impl Mirror {
     pub async fn rate(&self) -> Result<std::time::Duration> {
         //TODO: should rate, by downloading core.db
         unimplemented!();
+    }
+}
+
+impl AsyncWrite for Mirror {
+    fn poll_write(
+        self: Pin<&mut Self>,
+        cx: &mut Context<'_>,
+        data: &[u8],
+    ) -> Poll<std::io::Result<usize>> {
+        Poll::Ready(Ok(8))
+    }
+
+    fn poll_flush(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<std::io::Result<()>> {
+        Poll::Ready(Ok(()))
+    }
+
+    fn poll_shutdown(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<std::io::Result<()>> {
+        Poll::Ready(Ok(()))
     }
 }
