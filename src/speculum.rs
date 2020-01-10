@@ -11,6 +11,7 @@ use std::path::PathBuf;
 use std::time::{Duration, SystemTime};
 use tokio::fs;
 use tokio::prelude::*;
+use log::*;
 
 pub type Result<T> = anyhow::Result<T>;
 pub type Error = anyhow::Error;
@@ -73,6 +74,7 @@ impl Speculum {
         };
 
         let mut mirrors: Mirrors = if invalid {
+            info!("Fetching status json..");
             let mut file = fs::OpenOptions::new()
                 .create(true)
                 .write(true)
@@ -89,6 +91,7 @@ impl Speculum {
             file.write_all(request.as_bytes()).await?;
             serde_json::from_str(&request)?
         } else {
+            info!("Using cached status json..");
             Mirrors::load_from(cache_path).await?
         };
 
