@@ -1,11 +1,11 @@
 use crate::{Mirror, Protocols, Result};
 
+use log::*;
 use serde::Deserialize;
 use std::path::Path;
+use std::str::from_utf8;
 use tokio::fs::OpenOptions;
 use tokio::prelude::*;
-use std::str::from_utf8;
-use log::*;
 
 /// Contains information about Mirrors.
 ///
@@ -77,12 +77,11 @@ impl<'a> Mirrors {
         Ok(())
     }
 
-    pub async fn write<W: AsyncWrite + Unpin>(&self, fd: &mut W) -> Result<()>
-    {
+    pub async fn write<W: AsyncWrite + Unpin>(&self, fd: &mut W) -> Result<()> {
         let urls = &self.urls;
-        for url in urls.into_iter()
-        {
-            fd.write(format!("{}\n", &url.to_string()).as_bytes()).await?;
+        for url in urls.into_iter() {
+            fd.write(format!("{}\n", &url.to_string()).as_bytes())
+                .await?;
         }
         Ok(())
     }

@@ -2,7 +2,6 @@ use crate::{Protocols, Result};
 use serde::Deserialize;
 use std::pin::Pin;
 use std::task::{Context, Poll};
-use tokio::io;
 use tokio::prelude::*;
 
 //TODO: We ought to have something smarter, like serialize implatation of mirrorlist
@@ -42,17 +41,17 @@ impl Mirror {
 impl AsyncWrite for Mirror {
     fn poll_write(
         self: Pin<&mut Self>,
-        cx: &mut Context<'_>,
-        data: &[u8],
+        _cx: &mut Context<'_>,
+        _data: &[u8],
     ) -> Poll<std::io::Result<usize>> {
         Poll::Ready(Ok(8))
     }
 
-    fn poll_flush(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<std::io::Result<()>> {
+    fn poll_flush(self: Pin<&mut Self>, _cx: &mut Context<'_>) -> Poll<std::io::Result<()>> {
         Poll::Ready(Ok(()))
     }
 
-    fn poll_shutdown(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<std::io::Result<()>> {
+    fn poll_shutdown(self: Pin<&mut Self>, _cx: &mut Context<'_>) -> Poll<std::io::Result<()>> {
         Poll::Ready(Ok(()))
     }
 }

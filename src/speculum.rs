@@ -5,13 +5,13 @@ mod utils;
 
 use anyhow::bail;
 use dirs::cache_dir;
+use log::*;
 use reqwest::Client;
 use std::io::ErrorKind;
 use std::path::PathBuf;
 use std::time::{Duration, SystemTime};
 use tokio::fs;
 use tokio::prelude::*;
-use log::*;
 
 pub type Result<T> = anyhow::Result<T>;
 pub type Error = anyhow::Error;
