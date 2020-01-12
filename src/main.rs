@@ -1,4 +1,3 @@
-use log::*;
 use speculum::{Cli, Mirrors, Result, Speculum};
 
 #[tokio::main]
@@ -15,7 +14,6 @@ async fn main() -> Result<()> {
             a.score
                 .partial_cmp(&b.score)
                 .unwrap()
-                .then(a.last_sync.cmp(&b.last_sync))
         })
         .take(options.filters.latest)
         .write(&mut stdout)
