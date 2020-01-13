@@ -4,7 +4,7 @@ use log::*;
 use serde::Deserialize;
 use std::path::Path;
 use std::str::from_utf8;
-use tokio::fs::OpenOptions;
+use tokio::fs::{OpenOptions, File};
 use tokio::prelude::*;
 
 /// Contains information about Mirrors.
@@ -22,7 +22,7 @@ pub struct Mirrors {
 
 impl Mirrors {
     pub async fn load_from<P: AsRef<std::path::Path>>(path: P) -> Result<Mirrors> {
-        let mut file = tokio::fs::File::open(path).await?;
+        let mut file = File::open(path).await?;
         let mut buf: Vec<u8> = Vec::new();
         file.read_to_end(&mut buf).await?;
         Ok(serde_json::from_str(from_utf8(&buf)?)?)
