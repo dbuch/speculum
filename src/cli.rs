@@ -8,11 +8,20 @@ pub struct Cli {
     pub filters: Filters,
     #[structopt(flatten)]
     pub optional: Optional,
+    #[structopt(flatten)]
+    pub logging: Logging,
+}
 
+#[derive(StructOpt, Debug)]
+pub struct Logging {
     /// Increase verbosity (i.e. "-vvv" gives LogLevel::Debug)
     #[structopt(short, long, parse(from_occurrences))]
     pub verbose: u8,
+    /// Logging filter
+    #[structopt(long, default_value = "speculum")]
+    pub filter: String,
 }
+
 #[derive(StructOpt, Debug)]
 pub struct Filters {
     /// Connection protocol
@@ -37,26 +46,26 @@ pub struct Optional {
     /// The time before connection is invalidated (in secs [s])
     #[structopt(long, default_value = "5")]
     pub connection_timeout: u64,
-    /// Logging filter
-    #[structopt(long, default_value = "speculum")]
-    pub module_log: String,
 }
 
 impl Cli {
     pub fn initialize() -> Result<Cli> {
         let cli = Cli::from_args();
-        let mut logger_builder = env_logger::builder();
 
-        let level = match cli.verbose {
-            0 => log::LevelFilter::Warn,
-            1 => log::LevelFilter::Info,
-            2 => log::LevelFilter::Debug,
-            3 => log::LevelFilter::Trace,
-            _ => log::LevelFilter::max(),
-        };
+        // Configure Logging
+        {
+            let mut logger = env_logger::builder();
+            let level = match cli.logging.verbose {
+                0 => log::LevelFilter::Warn,
+                1 => log::LevelFilter::Info,
+                2 => log::LevelFilter::Debug,
+                3 => log::LevelFilter::Trace,
+                _ => log::LevelFilter::max(),
+            };
 
-        logger_builder.filter(Some(&cli.optional.module_log), level);
-        logger_builder.try_init()?;
+            logger.filter(Some(&cli.logging.filter), level);
+            logger.try_init()?;
+        }
 
         Ok(cli)
     }
