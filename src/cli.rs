@@ -59,8 +59,7 @@ impl Cli {
                 0 => log::LevelFilter::Warn,
                 1 => log::LevelFilter::Info,
                 2 => log::LevelFilter::Debug,
-                3 => log::LevelFilter::Trace,
-                _ => log::LevelFilter::max(),
+                _ => log::LevelFilter::Trace,
             };
 
             logger.filter(Some(&cli.logging.filter), level);
