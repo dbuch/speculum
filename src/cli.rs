@@ -15,8 +15,8 @@ pub struct Cli {
 #[derive(StructOpt, Debug)]
 pub struct Logging {
     /// Increase verbosity (i.e. "-vvv" gives LogLevel::Debug)
-    #[structopt(short, long, parse(from_occurrences))]
-    pub verbose: u8,
+    #[structopt(short, parse(from_occurrences))]
+    pub verbosity: u8,
     /// Logging filter
     #[structopt(long, default_value = "speculum")]
     pub filter: String,
@@ -55,7 +55,7 @@ impl Cli {
         // Configure Logging
         {
             let mut logger = env_logger::builder();
-            let level = match cli.logging.verbose {
+            let level = match cli.logging.verbosity {
                 0 => log::LevelFilter::Warn,
                 1 => log::LevelFilter::Info,
                 2 => log::LevelFilter::Debug,
