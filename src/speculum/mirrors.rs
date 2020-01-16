@@ -4,7 +4,7 @@ use log::*;
 use serde::Deserialize;
 use std::path::Path;
 use std::str::from_utf8;
-use tokio::fs::{OpenOptions, File};
+use tokio::fs::{File, OpenOptions};
 use tokio::prelude::*;
 
 /// Contains information about Mirrors.

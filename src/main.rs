@@ -10,11 +10,7 @@ async fn main() -> Result<()> {
 
     mirrors
         .filter_protocols(options.filters.protocols)
-        .order_by(|a, b| {
-            a.score
-                .partial_cmp(&b.score)
-                .unwrap()
-        })
+        .order_by(|a, b| a.score.partial_cmp(&b.score).unwrap())
         .take(options.filters.latest)
         .write(&mut stdout)
         .await?;
