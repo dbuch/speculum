@@ -3,7 +3,7 @@ mod mirrors;
 mod protocols;
 mod utils;
 
-use anyhow::{Result, bail};
+use anyhow::{bail, Result};
 use dirs::cache_dir;
 use log::*;
 use reqwest::Client;

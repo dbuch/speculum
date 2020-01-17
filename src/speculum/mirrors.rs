@@ -1,5 +1,5 @@
-use anyhow::Result;
 use crate::{Mirror, Protocols};
+use anyhow::Result;
 
 use serde::Deserialize;
 use std::path::Path;

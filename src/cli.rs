@@ -1,5 +1,6 @@
-use anyhow::Result;
 use crate::speculum::Protocols;
+use anyhow::Result;
+use log::LevelFilter;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
@@ -20,7 +21,7 @@ pub struct Logging {
     pub verbosity: u8,
     /// Logging filter
     #[structopt(long, default_value = "speculum")]
-    pub filter: String,
+    pub module_filter: String,
 }
 
 #[derive(StructOpt, Debug)]
@@ -57,13 +58,13 @@ impl Cli {
         {
             let mut logger = env_logger::builder();
             let level = match cli.logging.verbosity {
-                0 => log::LevelFilter::Warn,
-                1 => log::LevelFilter::Info,
-                2 => log::LevelFilter::Debug,
-                _ => log::LevelFilter::Trace,
+                0 => LevelFilter::Warn,
+                1 => LevelFilter::Info,
+                2 => LevelFilter::Debug,
+                _ => LevelFilter::Trace,
             };
 
-            logger.filter(Some(&cli.logging.filter), level);
+            logger.filter(Some(&cli.logging.module_filter), level);
             logger.try_init()?;
         }
 
