@@ -1,8 +1,9 @@
-use crate::{Protocols, Result};
+use crate::Protocols;
 use serde::Deserialize;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 use tokio::prelude::*;
+use anyhow::Result;
 
 //TODO: We ought to have something smarter, like serialize implatation of mirrorlist
 //      It's a very simple format.

@@ -3,7 +3,7 @@ mod mirrors;
 mod protocols;
 mod utils;
 
-use anyhow::bail;
+use anyhow::{Result, bail};
 use dirs::cache_dir;
 use log::*;
 use reqwest::Client;
@@ -12,9 +12,6 @@ use std::path::PathBuf;
 use std::time::{Duration, SystemTime};
 use tokio::fs;
 use tokio::prelude::*;
-
-pub type Result<T> = anyhow::Result<T>;
-pub type Error = anyhow::Error;
 
 pub use mirror::Mirror;
 pub use mirrors::Mirrors;

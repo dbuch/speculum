@@ -1,4 +1,5 @@
-use crate::speculum::{Protocols, Result};
+use anyhow::Result;
+use crate::speculum::Protocols;
 use std::path::PathBuf;
 use structopt::StructOpt;
 

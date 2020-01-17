@@ -1,4 +1,5 @@
-use crate::{Mirror, Protocols, Result};
+use anyhow::Result;
+use crate::{Mirror, Protocols};
 
 use log::*;
 use serde::Deserialize;

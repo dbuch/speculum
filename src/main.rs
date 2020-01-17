@@ -1,4 +1,5 @@
-use speculum::{Cli, Mirrors, Result, Speculum};
+use anyhow::Result;
+use speculum::{Cli, Mirrors, Speculum};
 
 #[tokio::main]
 async fn main() -> Result<()> {
