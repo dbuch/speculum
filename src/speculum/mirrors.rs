@@ -1,7 +1,6 @@
 use anyhow::Result;
 use crate::{Mirror, Protocols};
 
-use log::*;
 use serde::Deserialize;
 use std::path::Path;
 use std::str::from_utf8;
@@ -22,14 +21,16 @@ pub struct Mirrors {
 }
 
 impl Mirrors {
-    pub async fn load_from<P: AsRef<std::path::Path>>(path: P) -> Result<Mirrors> {
-        let mut file = File::open(path).await?;
+    pub async fn load_from_path<P: AsRef<std::path::Path>>(path: P) -> Result<Mirrors> {
         let mut buf: Vec<u8> = Vec::new();
+        let mut file = File::open(path).await?;
+
         file.read_to_end(&mut buf).await?;
-        Ok(serde_json::from_str(from_utf8(&buf)?)?)
+
+        Mirrors::load_from_utf8(buf)
     }
 
-    pub fn load_from_buf<P: AsRef<[u8]>>(buf: P) -> Result<Mirrors> {
+    pub fn load_from_utf8<P: AsRef<[u8]>>(buf: P) -> Result<Mirrors> {
         Ok(serde_json::from_str(from_utf8(buf.as_ref())?)?)
     }
 }

@@ -89,7 +89,7 @@ impl Speculum {
             serde_json::from_str(&request)?
         } else {
             info!("Using cached status json..");
-            Mirrors::load_from(cache_path).await?
+            Mirrors::load_from_path(cache_path).await?
         };
 
         mirrors.get_urls_mut().retain(|url| url.score.is_some());
