@@ -1,4 +1,5 @@
 use speculum::{Mirrors, Protocols};
+use anyhow::Result;
 
 static JSON_STRING: &str = r#"
         {
@@ -98,11 +99,21 @@ fn test_protocols() {
 #[test]
 fn api() {
     let mut mirrors = Mirrors::load_from_utf8(JSON_STRING).unwrap();
-    mirrors.get_urls_mut().retain(|url| url.score.is_some());
-
     mirrors
         .filter_protocols(Protocols::from("https"))
         .order_by(|a, b| a.score.partial_cmp(&b.score).unwrap());
 
     assert_eq!(mirrors.len(), 1);
+}
+
+#[tokio::test]
+async fn test_mirror_write() -> Result<()> {
+    let mut mirrors = Mirrors::load_from_utf8(JSON_STRING).unwrap();
+    let mut stdout = tokio::io::stdout();
+
+    for mirror in mirrors.get_urls()
+    {
+        mirror.write(&mut stdout).await?;
+    }
+    Ok(())
 }

@@ -3,7 +3,6 @@ use anyhow::Result;
 
 use serde::Deserialize;
 use std::path::Path;
-use std::str::from_utf8;
 use tokio::fs::{File, OpenOptions};
 use tokio::prelude::*;
 
@@ -30,8 +29,11 @@ impl Mirrors {
         Mirrors::load_from_utf8(buf)
     }
 
-    pub fn load_from_utf8<P: AsRef<[u8]>>(buf: P) -> Result<Mirrors> {
-        Ok(serde_json::from_str(from_utf8(buf.as_ref())?)?)
+    pub fn load_from_utf8<P: AsRef<[u8]>>(buf: P) -> Result<Mirrors>
+    {
+        let mut mirrors: Mirrors = serde_json::from_slice(buf.as_ref())?;
+        mirrors.get_urls_mut().retain(|url| url.score.is_some());
+        Ok(mirrors)
     }
 }
 
@@ -46,6 +48,10 @@ impl<'a> Mirrors {
 
     pub fn get_urls_mut(&'a mut self) -> &'a mut Vec<Mirror> {
         self.urls.as_mut()
+    }
+
+    pub fn get_urls(&'a mut self) -> &'a Vec<Mirror> {
+        &self.urls
     }
 
     pub fn filter_protocols(&'a mut self, p: Protocols) -> &'a mut Self {
@@ -79,8 +85,8 @@ impl<'a> Mirrors {
         Ok(())
     }
 
-    pub async fn write<W: AsyncWrite + Unpin>(&self, fd: &mut W) -> Result<()> {
-        let urls = &self.urls;
+    pub async fn write<W: AsyncWrite + Unpin>(&mut self, fd: &mut W) -> Result<()> {
+        let urls = &self.get_urls();
         for url in urls.into_iter() {
             fd.write(format!("{}\n", &url.to_string()).as_bytes())
                 .await?;

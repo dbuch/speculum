@@ -37,22 +37,18 @@ impl Mirror {
         //TODO: should rate, by downloading core.db
         unimplemented!();
     }
-}
-
-impl AsyncWrite for Mirror {
-    fn poll_write(
-        self: Pin<&mut Self>,
-        _cx: &mut Context<'_>,
-        _data: &[u8],
-    ) -> Poll<std::io::Result<usize>> {
-        Poll::Ready(Ok(8))
-    }
-
-    fn poll_flush(self: Pin<&mut Self>, _cx: &mut Context<'_>) -> Poll<std::io::Result<()>> {
-        Poll::Ready(Ok(()))
-    }
-
-    fn poll_shutdown(self: Pin<&mut Self>, _cx: &mut Context<'_>) -> Poll<std::io::Result<()>> {
-        Poll::Ready(Ok(()))
+    
+    pub async fn write<T>(&self, target: &mut T) -> Result<()>
+    where T: AsyncWrite + Unpin
+    {
+        match &self.url {
+            Some(url) =>
+            {
+                let url = url.as_bytes();
+                target.write(url).await?;
+            }
+            None => anyhow::bail!("Nothing to write")
+        };
+        Ok(())
     }
 }
