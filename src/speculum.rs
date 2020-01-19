@@ -70,7 +70,7 @@ impl Speculum {
             Err(e) => bail!(e),
         };
 
-        let mut mirrors: Mirrors = if invalid {
+        let mirrors: Mirrors = if invalid {
             info!("Fetching status json..");
             let mut file = fs::OpenOptions::new()
                 .create(true)
@@ -86,13 +86,11 @@ impl Speculum {
                 .text_with_charset("UTF-8")
                 .await?;
             file.write_all(request.as_bytes()).await?;
-            serde_json::from_str(&request)?
+            Mirrors::load_from_utf8(request)?
         } else {
             info!("Using cached status json..");
             Mirrors::load_from_path(cache_path).await?
         };
-
-        mirrors.get_urls_mut().retain(|url| url.score.is_some());
 
         Ok(mirrors)
     }
