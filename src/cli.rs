@@ -27,7 +27,7 @@ pub struct Logging {
 #[derive(StructOpt, Debug)]
 pub struct Filters {
     /// Connection protocol
-    #[structopt(long, default_value = "https,http")]
+    #[structopt(long, default_value = "https,http,rsync")]
     pub protocols: Protocols,
     /// Country code (i.e. "en" or "us")
     #[structopt(long)]

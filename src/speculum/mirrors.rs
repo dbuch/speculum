@@ -66,7 +66,6 @@ impl<'a> Mirrors {
 
     /// Saves the recieved mirrorlist in pacman format
     pub async fn save<P: AsRef<Path>>(&'a mut self, path: P) -> Result<()> {
-        let urls = &self.urls;
         let mut file = OpenOptions::new()
             .create(true)
             .write(true)
@@ -74,14 +73,8 @@ impl<'a> Mirrors {
             .open(path)
             .await?;
 
-        let fetched = urls
-            .into_iter()
-            .map(|url| url.to_string())
-            .collect::<Vec<String>>()
-            .join("\n");
+        self.write(&mut file).await?;
 
-        file.write(fetched.as_bytes()).await?;
-        file.sync_data().await?;
         Ok(())
     }
 

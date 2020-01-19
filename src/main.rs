@@ -7,13 +7,12 @@ async fn main() -> Result<()> {
 
     let speculum = Speculum::new()?;
     let mut mirrors: Mirrors = speculum.fetch_mirrors().await?;
-    let mut stdout = tokio::io::stdout();
 
     mirrors
         .filter_protocols(options.filters.protocols)
         .order_by(|a, b| a.score.partial_cmp(&b.score).unwrap())
         .take(options.filters.latest)
-        .write(&mut stdout)
+        .save(options.optional.save)
         .await?;
 
     Ok(())
