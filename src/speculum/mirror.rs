@@ -1,13 +1,11 @@
 use crate::Protocols;
 use anyhow::Result;
 use serde::Deserialize;
-use tokio::prelude::*;
 use std::fmt::{self, Display, Formatter};
+use tokio::prelude::*;
 
-impl Display for Mirror
-{
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result
-    {
+impl Display for Mirror {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "Server = {}$repo/os/$arch", self.url)
     }
 }
@@ -36,9 +34,10 @@ impl Mirror {
         //TODO: should rate, by downloading core.db
         unimplemented!();
     }
-    
+
     pub async fn write<T>(&self, target: &mut T) -> Result<()>
-    where T: AsyncWrite + Unpin
+    where
+        T: AsyncWrite + Unpin,
     {
         target.write(self.url.as_bytes()).await?;
         Ok(())

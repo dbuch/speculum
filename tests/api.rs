@@ -1,5 +1,5 @@
-use speculum::{Mirrors, Protocols};
 use anyhow::Result;
+use speculum::{Mirrors, Protocols};
 
 static JSON_STRING: &str = r#"
         {
@@ -111,8 +111,7 @@ async fn test_mirror_write() -> Result<()> {
     let mut mirrors = Mirrors::load_from_utf8(JSON_STRING).unwrap();
     let mut stdout = tokio::io::stdout();
 
-    for mirror in mirrors.get_urls()
-    {
+    for mirror in mirrors.get_urls() {
         mirror.write(&mut stdout).await?;
     }
     Ok(())

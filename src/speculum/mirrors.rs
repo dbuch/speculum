@@ -29,10 +29,11 @@ impl Mirrors {
         Mirrors::load_from_utf8(buf)
     }
 
-    pub fn load_from_utf8<P: AsRef<[u8]>>(buf: P) -> Result<Mirrors>
-    {
+    pub fn load_from_utf8<P: AsRef<[u8]>>(buf: P) -> Result<Mirrors> {
         let mut mirrors: Mirrors = serde_json::from_slice(buf.as_ref())?;
-        mirrors.get_urls_mut().retain(|url| url.completion_pct.ne(&0.0f64));
+        mirrors
+            .get_urls_mut()
+            .retain(|url| url.completion_pct.ne(&0.0f64));
         Ok(mirrors)
     }
 }
@@ -80,8 +81,7 @@ impl<'a> Mirrors {
 
     pub async fn write<W: AsyncWrite + Unpin>(&mut self, fd: &mut W) -> Result<()> {
         for url in self.get_urls().into_iter() {
-            fd.write(format!("{}\n", &url).as_bytes())
-                .await?;
+            fd.write(format!("{}\n", &url).as_bytes()).await?;
         }
         Ok(())
     }
