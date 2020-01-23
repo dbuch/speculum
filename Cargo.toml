@@ -6,7 +6,7 @@ edition = "2018"
 
 [dependencies]
 tokio = { version = "0.2.10", features = ["full"] }
-serde_json = "1.0.44"
+serde_json = "1.0.45"
 serde = { version = "1.0.104", features = ["derive"] }
 structopt = "0.3.8"
 log = "0.4.8"
