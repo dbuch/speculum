@@ -55,8 +55,9 @@ impl<'a> Mirrors {
         &self.urls
     }
 
-    pub fn filter_protocols(&'a mut self, p: Protocols) -> &'a mut Self {
-        self.urls.retain(|url| url.protocol.intercects(p));
+    pub fn filter_protocols(&'a mut self, p: impl Into<Protocols>) -> &'a mut Self {
+        let protocol: Protocols = p.into();
+        self.urls.retain(|url| url.protocol.intercects(protocol));
         self
     }
 
@@ -66,7 +67,7 @@ impl<'a> Mirrors {
     }
 
     /// Saves the recieved mirrorlist in pacman format
-    pub async fn save<P: AsRef<Path>>(&'a mut self, path: P) -> Result<()> {
+    pub async fn save(&'a mut self, path: impl AsRef<Path>) -> Result<()> {
         let mut file = OpenOptions::new()
             .create(true)
             .write(true)
