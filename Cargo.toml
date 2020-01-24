@@ -11,7 +11,7 @@ serde = { version = "1.0.104", features = ["derive"] }
 structopt = "0.3.8"
 log = "0.4.8"
 env_logger = "0.7.1"
-bytes = "0.5.3"
+bytes = "0.5.4"
 users = "0.9.1"
 reqwest = { version = "0.10.1", features = ["json"] }
 anyhow = "1.0.26"
