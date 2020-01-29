@@ -39,9 +39,9 @@ pub struct Filters {
 
 #[derive(StructOpt, Debug)]
 pub struct Optional {
-    /// Saves the recieved mirrorlist in pacman format
-    #[structopt(long, default_value = "/etc/pacman.d/mirrorlist", parse(from_os_str))]
-    pub save: PathBuf,
+    /// Writes the recieved mirrorlist in pacman format to file
+    #[structopt(long, default_value = "/dev/stdout", parse(from_os_str))]
+    pub write: PathBuf,
     /// The time before cache is invalidated (in secs [s])
     #[structopt(long, default_value = "300")]
     pub cache_timeout: u64,

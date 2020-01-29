@@ -2,8 +2,7 @@ use crate::{Mirror, Protocols};
 use anyhow::Result;
 
 use serde::Deserialize;
-use std::path::Path;
-use tokio::fs::{File, OpenOptions};
+use tokio::fs::File;
 use tokio::prelude::*;
 
 /// Contains information about Mirrors.
@@ -66,20 +65,7 @@ impl<'a> Mirrors {
         self
     }
 
-    /// Saves the recieved mirrorlist in pacman format
-    pub async fn save(&'a mut self, path: impl AsRef<Path>) -> Result<()> {
-        let mut file = OpenOptions::new()
-            .create(true)
-            .write(true)
-            .truncate(true)
-            .open(path)
-            .await?;
-
-        self.write(&mut file).await?;
-
-        Ok(())
-    }
-
+    /// Writes the recieved mirrorlist in pacman format a file
     pub async fn write<W: AsyncWrite + Unpin>(&mut self, fd: &mut W) -> Result<()> {
         for url in self.get_urls().into_iter() {
             fd.write(format!("{}\n", &url).as_bytes()).await?;
