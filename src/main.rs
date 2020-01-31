@@ -1,10 +1,9 @@
 use anyhow::Result;
 use speculum::{Cli, Mirrors, Speculum};
-use tokio::fs::{OpenOptions, File};
 use std::path::PathBuf;
+use tokio::fs::{File, OpenOptions};
 
-async fn save_file(path: PathBuf) -> Result<File>
-{
+async fn save_file(path: PathBuf) -> Result<File> {
     let file = OpenOptions::new()
         .create(true)
         .write(true)
