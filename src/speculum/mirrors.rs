@@ -32,7 +32,7 @@ impl Mirrors {
         let mut mirrors: Mirrors = serde_json::from_slice(buf.as_ref())?;
         mirrors
             .get_urls_mut()
-            .retain(|url| url.completion_pct.ne(&0.0f64));
+            .retain(|url| url.completion_pct.ne(&0.0f64) || !f64::is_nan(url.completion_pct));
         Ok(mirrors)
     }
 }

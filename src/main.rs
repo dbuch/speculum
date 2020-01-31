@@ -15,7 +15,6 @@ async fn save_file(path: PathBuf) -> Result<File>
     Ok(file)
 }
 
-
 #[tokio::main]
 async fn main() -> Result<()> {
     let options = Cli::initialize()?;
