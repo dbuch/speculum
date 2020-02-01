@@ -1,5 +1,7 @@
 use crate::{Mirror, Protocols};
 use anyhow::Result;
+use std::fmt::Debug;
+use log::info;
 
 use serde::Deserialize;
 use tokio::fs::File;
@@ -42,6 +44,7 @@ impl<'a> Mirrors {
     where
         F: FnMut(&Mirror, &Mirror) -> std::cmp::Ordering,
     {
+        info!("Ording entries");
         self.urls.sort_unstable_by(order);
         self
     }
@@ -56,20 +59,24 @@ impl<'a> Mirrors {
 
     pub fn filter_protocols(&'a mut self, p: impl Into<Protocols>) -> &'a mut Self {
         let protocol: Protocols = p.into();
+        info!("Applying protocol filtering {:?}", protocol);
         self.urls.retain(|url| url.protocol.intercects(protocol));
         self
     }
 
     pub fn take(&'a mut self, n: usize) -> &'a mut Self {
+        info!("Taking {} entries", n);
         self.get_urls_mut().truncate(n);
         self
     }
 
     /// Writes the recieved mirrorlist in pacman format a file
-    pub async fn write<W: AsyncWrite + Unpin>(&mut self, fd: &mut W) -> Result<()> {
+    pub async fn write<W: AsyncWrite + Unpin + Debug>(&mut self, fd: &mut W) -> Result<()> {
+        info!("Writing to {:?}", *fd);
         for url in self.get_urls().into_iter() {
             fd.write(format!("{}\n", &url).as_bytes()).await?;
         }
+        fd.shutdown().await?;
         Ok(())
     }
 

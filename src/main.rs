@@ -19,6 +19,7 @@ async fn main() -> Result<()> {
     let options = Cli::initialize()?;
 
     let speculum = Speculum::new()?;
+
     let mut mirrors: Mirrors = speculum.fetch_mirrors().await?;
     let mut file = save_file(options.optional.write).await?;
 
