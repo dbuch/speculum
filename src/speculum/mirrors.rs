@@ -1,7 +1,7 @@
 use crate::{Mirror, Protocols};
 use anyhow::Result;
-use std::fmt::Debug;
 use log::info;
+use std::fmt::Debug;
 
 use serde::Deserialize;
 use tokio::fs::File;
