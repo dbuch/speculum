@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{Context, Result};
 use speculum::{Cli, Mirrors, Speculum};
 use std::path::PathBuf;
 use tokio::fs::{File, OpenOptions};
@@ -8,8 +8,9 @@ async fn save_file(path: PathBuf) -> Result<File> {
         .create(true)
         .write(true)
         .truncate(true)
-        .open(path)
-        .await?;
+        .open(&path)
+        .await
+        .context(format!("Unable to mirrors to \"{}\"", &path.to_str().unwrap()))?;
 
     Ok(file)
 }
