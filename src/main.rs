@@ -10,7 +10,7 @@ async fn save_file(path: PathBuf) -> Result<File> {
         .truncate(true)
         .open(&path)
         .await
-        .context(format!("Unable to mirrors to \"{}\"", &path.to_str().unwrap()))?;
+        .context(format!("Cannot write mirrors to: \"{}\"", path.to_string_lossy()))?;
 
     Ok(file)
 }
