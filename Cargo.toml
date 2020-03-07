@@ -5,14 +5,15 @@ authors = ["Daniel Buch Hansen <boogiewasthere@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-tokio = { version = "0.2.11", features = ["full"] }
+tokio = { version = "0.2.13", features = ["full"] }
 serde_json = "1.0.48"
 serde = { version = "1.0.104", features = ["derive"] }
-structopt = "0.3.9"
+structopt = "0.3.11"
 log = "0.4.8"
 env_logger = "0.7.1"
 bytes = "0.5.4"
 users = "0.9.1"
-reqwest = { version = "0.10.2", features = ["json"] }
+reqwest = { version = "0.10.4", features = ["json"] }
 anyhow = "1.0.26"
 dirs = "2.0.2"
+futures = "0.3.4"

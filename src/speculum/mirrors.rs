@@ -6,6 +6,7 @@ use std::fmt::Debug;
 use serde::Deserialize;
 use tokio::fs::File;
 use tokio::prelude::*;
+use futures::future::try_join_all;
 
 /// Contains information about Mirrors.
 ///
@@ -82,5 +83,18 @@ impl<'a> Mirrors {
 
     pub fn len(&self) -> usize {
         self.urls.len()
+    }
+
+    pub async fn rate_all(&'a mut self) -> Result<&'a mut Self>
+    {
+        let mut rate = Vec::new();
+        for mirror in self.get_urls_mut()
+        {
+            rate.push(mirror.rate());
+        }
+
+        try_join_all(rate).await?;
+        
+        Ok(self)
     }
 }
