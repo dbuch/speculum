@@ -33,7 +33,7 @@ pub struct Filters {
     #[structopt(long)]
     pub country: Option<String>,
 
-    #[structopt(long, default_value = "30")]
+    #[structopt(long, default_value = "20")]
     pub latest: usize,
 }
 

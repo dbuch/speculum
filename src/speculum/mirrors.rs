@@ -87,7 +87,7 @@ impl<'a> Mirrors {
 
     pub async fn rate_all(&'a mut self) -> Result<&'a mut Self>
     {
-        let mut rate = Vec::new();
+        let mut rate = Vec::with_capacity(self.get_urls().len());
         for mirror in self.get_urls_mut()
         {
             rate.push(mirror.rate());
