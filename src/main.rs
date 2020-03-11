@@ -28,6 +28,7 @@ async fn main() -> Result<()> {
         .filter_protocols(options.filters.protocols)
         .order_by(|a, b| a.score.partial_cmp(&b.score).unwrap())
         .take(options.filters.latest)
+        .order_by(|a, b| a.last_sync.cmp(&b.last_sync))
         .write(&mut file)
         .await?;
 
