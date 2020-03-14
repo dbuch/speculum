@@ -44,25 +44,25 @@ impl Display for Mirror {
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct RateResult {
-    num_bytes: u128,
-    num_millis: u128,
+    num_bytes: f64,
+    num_millis: f64,
 }
 
 impl RateResult {
-    pub fn to_bytes_per_sec(&self) -> f64
-    {
-        (self.num_bytes as f64 / self.num_millis as f64)
+    pub fn to_bytes_per_sec(&self) -> f64 {
+        self.num_bytes / self.num_millis
     }
 }
 
 impl PartialOrd for RateResult {
     fn partial_cmp(&self, other: &RateResult) -> std::option::Option<std::cmp::Ordering> {
-        self.to_bytes_per_sec().partial_cmp(&other.to_bytes_per_sec())
+        other.to_bytes_per_sec()
+            .partial_cmp(&self.to_bytes_per_sec())
     }
 }
 
 impl RateResult {
-    pub fn new(num_bytes: u128, num_millis: u128) -> Self {
+    pub fn new(num_bytes: f64, num_millis: f64) -> Self {
         RateResult {
             num_bytes,
             num_millis,
@@ -70,7 +70,7 @@ impl RateResult {
     }
 
     pub fn to_pretty(&self) -> String {
-        let byte_unit: Byte = Byte::from_bytes(self.num_bytes * self.num_millis);
+        let byte_unit: Byte = Byte::from_bytes(self.to_bytes_per_sec() as u128);
         format!("{}/s", byte_unit.get_appropriate_unit(true))
     }
 }
@@ -87,8 +87,8 @@ impl Mirror {
 
         let now = std::time::Instant::now();
         if let Ok(resp) = reqwest::get(&*url).await {
-            let num_bytes = resp.bytes().await?.len() as u128;
-            let num_millis = now.elapsed().as_millis();
+            let num_bytes = resp.bytes().await?.len() as f64;
+            let num_millis = now.elapsed().as_secs_f64();
 
             self.rate = Some(RateResult::new(num_bytes, num_millis));
         }
